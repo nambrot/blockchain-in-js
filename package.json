@@ -1,0 +1,25 @@
+{
+  "name": "blockchain-js",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@blueprintjs/core": "^1.32.0",
+    "@blueprintjs/labs": "^0.12.0",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.2",
+    "ramda": "^0.25.0",
+    "react": "^16.1.0",
+    "react-addons-css-transition-group": "^15.6.2",
+    "react-dom": "^16.1.0",
+    "react-scripts": "1.0.17",
+    "react-sortable-tree": "^1.5.0",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
