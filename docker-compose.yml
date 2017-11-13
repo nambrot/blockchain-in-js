@@ -1,0 +1,16 @@
+version: '3'
+services:
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    ports:
+    - "80:80"
+    links:
+    - socketio-server
+  socketio-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+    - "4000:4000"
