@@ -8,9 +8,11 @@ import './index.css';
 import {any, find} from 'ramda';
 import Blockchain from './models/Blockchain';
 
+const defaultBlockchain = new Blockchain('Bitcoin')
+
 let state = {
-  blockchains: [],
-  selectedBlockchain: undefined
+  blockchains: [defaultBlockchain],
+  selectedBlockchain: defaultBlockchain
 }
 
 window.state = state

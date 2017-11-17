@@ -39,6 +39,11 @@ class App extends Component {
                   value={this.state.ownBlockchainName}
                   style={{paddingRight: '150px'}}
                   onChange={(evt) => this.setState({ownBlockchainName: evt.target.value})}
+                  onKeyPress={(evt) => {
+                    if (evt.charCode === 13) {
+                      this.pickBlockchain(this.state.ownBlockchainName)
+                    }
+                  }}
                 />
               <div className="pt-input-action">
                 <Button
