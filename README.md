@@ -27,3 +27,32 @@ class Block {
 If you look at the code, you can see how the P2P aspect of blockchains comes into play. Once a node decided it "mined" a block, it can broadcast that block to all other nodes, you can verify it and then add it to their tree, as well.
 
 ![blockbroadcast](https://user-images.githubusercontent.com/571810/32704273-37b7b07a-c7d0-11e7-900c-851031c81ad4.gif)
+
+
+## Step 2: So what is THE blockchain?
+
+In step 1, we saw that in a chain of blocks, the last block basically validates all data in the chain of its ascendents, as any change in the data up the chain would inevitably change the hash of the last block. That is all great, but what do people mean by THE blockchain?
+
+By definition, THE blockchain is just the longest chain available in the tree. So at one point, a chain can be the lonest one, but then get superseeded by another. Let's visualize the longest chain in the tree.
+
+```javascript
+class Blockchain {
+  longestChain() {
+    const blocks = values(this.blocks)
+    const maxByHeight = maxBy(prop('height'))
+    const maxHeightBlock = reduce(maxByHeight, blocks[0], blocks)
+    const getParent = (x) => {
+      if (x === undefined) {
+        return false
+      }
+
+      return [x, this.blocks[x.parentHash]]
+    }
+    return reverse(unfold(getParent, maxHeightBlock))
+  }
+}
+```
+
+![longestchain](https://user-images.githubusercontent.com/571810/33043509-b40cb21c-ce13-11e7-8fb2-20f3932e85d1.gif)
+
+So given a tree, the longest chain represents our current view of which history of blocks, and thus which representation of data is the one we deem valid.

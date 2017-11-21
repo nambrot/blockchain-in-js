@@ -2,6 +2,7 @@ import Block from './Block';
 import {fromJSON} from './Block';
 import {rerender} from "../store";
 import {publish, subscribeTo} from "../network";
+import {maxBy, reduce, unfold, reverse, values, prop} from "ramda";
 
 class Blockchain {
   constructor(name) {
@@ -24,8 +25,22 @@ class Blockchain {
     })
   }
 
+  longestChain() {
+    const blocks = values(this.blocks)
+    const maxByHeight = maxBy(prop('height'))
+    const maxHeightBlock = reduce(maxByHeight, blocks[0], blocks)
+    const getParent = (x) => {
+      if (x === undefined) {
+        return false
+      }
+
+      return [x, this.blocks[x.parentHash]]
+    }
+    return reverse(unfold(getParent, maxHeightBlock))
+  }
+
   createGenesisBlock() {
-    const block = new Block(this, 'root', this.name);
+    const block = new Block(this, 'root', 1, this.name);
     this.blocks[block.hash] = block;
     this.genesis = block;
   }
@@ -35,16 +50,22 @@ class Blockchain {
   }
 
   addBlock(parent) {
-    const newBlock = new Block(this, parent.hash);
+    const newBlock = new Block(this, parent.hash, parent.height + 1);
     this._addBlock(newBlock)
     publish('BLOCKS_BROADCAST', { blocks: [newBlock.toJSON()], blockchainName: this.name })
   }
 
   _addBlock(block) {
-    if (!this.containsBlock(block)) {
-      this.blocks[block.hash] = block;
-      rerender()
-    }
+    if (this.containsBlock(block))
+      return
+
+    // check that the parent is actually existent and the advertised height is correct
+    const parent = this.blocks[block.parentHash];
+    if (parent === undefined && parent.height + 1 !== block.height )
+      return
+
+    this.blocks[block.hash] = block;
+    rerender()
   }
 }
 export default Blockchain;

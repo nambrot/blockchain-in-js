@@ -28,3 +28,8 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.rst__row.partOfLongestChain .rst__rowContents{
+  background-color: #82cfff;
+  color: white;
+}
