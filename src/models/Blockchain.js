@@ -49,13 +49,14 @@ class Blockchain {
     return this.blocks[block.hash] !== undefined
   }
 
-  addBlock(parent) {
-    const newBlock = new Block(this, parent.hash, parent.height + 1);
+  addBlock(newBlock) {
     this._addBlock(newBlock)
     publish('BLOCKS_BROADCAST', { blocks: [newBlock.toJSON()], blockchainName: this.name })
   }
 
   _addBlock(block) {
+    if (!block.isValid())
+      return
     if (this.containsBlock(block))
       return
 

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import SortableTree from 'react-sortable-tree';
 import {getTreeFromFlatData} from 'react-sortable-tree';
-import {Button} from '@blueprintjs/core';
+import {Button, Dialog} from '@blueprintjs/core';
 import { contains, pluck, pipe } from "ramda";
+import NewBlock from "./NewBlock"
+import DetailBlock from "./DetailBlock"
 import "../App.css";
 
 function generateNodeProps(longestChain){
@@ -10,11 +12,14 @@ function generateNodeProps(longestChain){
     return {
       buttons: [
         <Button
+          key='detail'
+          iconName="pt-icon-database"
+          onClick={this.showBlock(node)}
+        />,
+        <Button
+          key='add'
           text='Add block from here'
-          onClick={() => {
-            const block = this.props.blockchain.blocks[node.hash]
-            block.addChild();
-          }}
+          onClick={this.addBlockFrom(node)}
         />
       ],
       node: {
@@ -30,6 +35,26 @@ function generateNodeProps(longestChain){
 class BlockchainWelcome extends Component {
   state = {
     treeData: [{ title: 'Chicken', children: [ { title: 'Egg' } ] }],
+    addBlock: null,
+    showBlock: null
+  }
+  addBlockFrom = (parent) => {
+    return (evt) => {
+      const parentBlock = parent.blockchain.blocks[parent.hash]
+      this.setState({ addBlock: parentBlock.createChild() })
+    }
+  }
+  showBlock = (block) => {
+    return (evt) => {
+      const showBlock = block.blockchain.blocks[block.hash]
+      this.setState({ showBlock })
+    }
+  }
+  closeAddBlock = () => {
+    this.setState({ addBlock: null })
+  }
+  closeShowBlock = () => {
+    this.setState({ showBlock: null })
   }
   render() {
     const treeData = getTreeFromFlatData({
@@ -49,6 +74,30 @@ class BlockchainWelcome extends Component {
             generateNodeProps={generateNodeProps(longestChain).bind(this)}
           />
         </div>
+        <Dialog
+          isOpen={this.state.addBlock !== null}
+          onClose={this.closeAddBlock}
+          transitionDuration={50}
+          title="Add block"
+          style={{width: '70%'}}
+        >
+          <NewBlock
+            block={this.state.addBlock}
+            onCancel={this.closeAddBlock}
+          />
+        </Dialog>
+        <Dialog
+          isOpen={this.state.showBlock !== null}
+          onClose={this.closeShowBlock}
+          transitionDuration={50}
+          title="Block Detail"
+          style={{width: '70%'}}
+        >
+          <DetailBlock
+            block={this.state.showBlock}
+            onCancel={this.closeShowBlock}
+          />
+        </Dialog>
       </div>
     )
 
