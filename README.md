@@ -87,3 +87,43 @@ The actual number of '0's in real world blockchains is calculated dynamically ba
 ![proofofwork](https://user-images.githubusercontent.com/571810/33279514-cdae5fd2-d36c-11e7-97c5-94e61d4e9bce.gif)
 
 Proof-of-work is what "secures" the blockchain, makes it decentralized and the reason where the infamous 51% double-spend attack comes from. Once a block makes it onto the blockchain (the longest chain of blocks), an attacker would have to redo the proof-of-work for that block and all blocks following it. The example would be a double-spend: Add a transaction to a block, but then make it "invalid" by mining an alternate chain from the parent. However, without having 51% of the computation power of the network, it would be always lagging behind all the other nodes in the network trying to add blocks from the currently legitimate blockchain. Thus the security of the blockchain relies on computational power to not be centralized within single parties.
+
+## Step 4: What do I mine?
+
+So the question is why miners would expend all this effort to add a block? Unless it is a fun game for them, usually we are talking about economic incentives now. In order for the blockchain to be secured by miners, the protocol gives miners a mining reward, currently amounting to 12.5 Bitcoin. Other nodes will accept the miners block with the reward to itself as long as it passes the other rules of the protocol we discussed above. Let's talk about the specific mechanic of how a miner gives itself the reward, which requires a concept of ownership and a way to include such ownership in a block.
+
+To understand ownership, you'll need a high-level understanding of public-key encryption which is beyond the scope of this tutorial. ([https://www.youtube.com/watch?v=3QnD2c4Xovk](https://www.youtube.com/watch?v=3QnD2c4Xovk) looks like a good non-technical explanation). All you need to know for this is that the following possible:
+
+1. There is a way to generate two things, a public key and a private key. Keep the private key secret.
+2. Per the name, the public key is something that you can publish publically to other parties.
+3. In order to proof that you were the one that generated the public key, you can sign a specific message (or arbitrary data) with your private key. Others can take your signature (that is specific to the message), the message as well as your public key and verify that the signature must have indeed come from someone who has control of the private key (as there is no way to satisfactorally sign the message without the private key).
+(4. With a public key, you can encrypt a message (data) so that only the owner of the private key can decrypt it)
+
+In short, ownership is the concept of being in control of something, in this case, you "own" the public key, and you can prove such ownership by signing data with your private key. Thus, in order to receive the mining reward, i.e. claim ownership over it, all the miner has to do is to include their public key in the block. That public key is also known as the wallet address in Bitcoin.
+
+So let's just simply add a field in the block called `coinbaseBeneficiary` that contains the public key of the miner and add it to the payload for the hash calculation:
+
+```javascript
+class Block {
+  isValid() {
+    return this.parentHash === 'root' ||
+      (this.hash.substr(-DIFFICULTY) === "0".repeat(DIFFICULTY) &&
+      this.hash === this._calculateHash())
+  }
+
+  createChild(coinbaseBeneficiary) {
+    return new Block({
+      blockchain: this.blockchain,
+      parentHash: this.hash,
+      height: this.height + 1,
+      coinbaseBeneficiary
+    })
+  }
+
+  _calculateHash() {
+    return sha256(this.nonce + this.parentHash + this.coinbaseBeneficiary).toString()
+  }
+}
+```
+
+You should know enough of about blockchains and the way they enable to us record data as a ledger in order to understand how this can allows us to keep track of ownership of "coins". The next few steps will be about actually using the coins and making them useful in transactions.

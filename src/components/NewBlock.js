@@ -56,6 +56,23 @@ class NewBlock extends Component {
               <td>+</td>
             </tr>
             <tr>
+              <td>Coinbase Beneficiary</td>
+              <td>
+                <textarea
+                  className="pt-input"
+                  spellCheck={false}
+                  style={{ width: "200px", height: "100px" }}
+                  value={this.props.block.coinbaseBeneficiary}
+                  readOnly
+                />
+              </td>
+              <td>This is the public key of your node</td>
+            </tr>
+            <tr>
+              <td />
+              <td>+</td>
+            </tr>
+            <tr>
               <td>Nonce</td>
               <td>
                 <textarea

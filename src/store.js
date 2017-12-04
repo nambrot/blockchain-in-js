@@ -7,12 +7,25 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import {any, find} from 'ramda';
 import Blockchain from './models/Blockchain';
+import { generatePair } from './crypto'
 
 const defaultBlockchain = new Blockchain('Bitcoin')
 
+const pair = generatePair();
+
+const identity = {
+  name: "Node " + pair.publicKey.substr(0, 10),
+  ...pair
+}
+
+const identities = {}
+identities[identity.publicKey] = identity
+
 let state = {
   blockchains: [defaultBlockchain],
-  selectedBlockchain: defaultBlockchain
+  selectedBlockchain: defaultBlockchain,
+  identities: identities,
+  node: identity
 }
 
 window.state = state

@@ -63,7 +63,11 @@ class App extends Component {
           }
           {
             this.props.appState.selectedBlockchain !== undefined &&
-            <BlockchainWelcome blockchain={this.props.appState.selectedBlockchain} />
+            <BlockchainWelcome
+              blockchain={this.props.appState.selectedBlockchain}
+              node={this.props.appState.node}
+              identities={this.props.appState.identities}
+            />
           }
         </div>
       </div>

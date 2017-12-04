@@ -40,7 +40,12 @@ class Blockchain {
   }
 
   createGenesisBlock() {
-    const block = new Block(this, 'root', 1, this.name);
+    const block = new Block({
+      blockchain: this,
+      parentHash: 'root',
+      height: 1,
+      nonce: this.name
+    });
     this.blocks[block.hash] = block;
     this.genesis = block;
   }

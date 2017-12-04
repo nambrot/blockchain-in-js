@@ -1,7 +1,4 @@
 import React, { Component } from "react";
-import classnames from "classnames";
-import { Button } from "@blueprintjs/core";
-import sha256 from "crypto-js/sha256";
 
 class DetailBlock extends Component {
   render() {
@@ -16,6 +13,14 @@ class DetailBlock extends Component {
             <tr>
               <td>Parent Hash</td>
               <td>"{this.props.block.parentHash}"</td>
+            </tr>
+            <tr>
+              <td />
+              <td>+</td>
+            </tr>
+            <tr>
+              <td>Coinbase Beneficiary</td>
+              <td>"{this.props.block.coinbaseBeneficiary}"</td>
             </tr>
             <tr>
               <td />
