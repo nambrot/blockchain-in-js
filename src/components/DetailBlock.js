@@ -1,46 +1,28 @@
 import React, { Component } from "react";
-
+import { Tab2, Tabs2 } from "@blueprintjs/core";
+import BlockInfo from "./BlockInfo";
+import UTXOPoolTable from "./UTXOPoolTable";
 class DetailBlock extends Component {
   render() {
     return (
       <div style={{ padding: "10px" }}>
-        <table className="pt-table .modifier">
-          <tbody>
-            <tr>
-              <td />
-              <td>SHA256(</td>
-            </tr>
-            <tr>
-              <td>Parent Hash</td>
-              <td>"{this.props.block.parentHash}"</td>
-            </tr>
-            <tr>
-              <td />
-              <td>+</td>
-            </tr>
-            <tr>
-              <td>Coinbase Beneficiary</td>
-              <td>"{this.props.block.coinbaseBeneficiary}"</td>
-            </tr>
-            <tr>
-              <td />
-              <td>+</td>
-            </tr>
-            <tr>
-              <td>Nonce</td>
-              <td>"{this.props.block.nonce}"</td>
-              <td />
-            </tr>
-            <tr>
-              <td />
-              <td>) =</td>
-            </tr>
-            <tr>
-              <td>Hash</td>
-              <td>"{this.props.block.hash}"</td>
-            </tr>
-          </tbody>
-        </table>
+        <Tabs2>
+          <Tab2
+            id="blockinfo"
+            title="Block Info"
+            panel={<BlockInfo block={this.props.block} />}
+          />
+          <Tab2
+            id="utxopool"
+            title="UTXOPool"
+            panel={
+              <UTXOPoolTable
+                block={this.props.block}
+                identities={this.props.identities}
+              />
+            }
+          />
+        </Tabs2>
       </div>
     );
   }

@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import classnames from "classnames";
 import { Button } from "@blueprintjs/core";
 import sha256 from "crypto-js/sha256";
+import Key from "./Key";
 
 class NewBlock extends Component {
   addBlock = evt => {
@@ -58,13 +59,7 @@ class NewBlock extends Component {
             <tr>
               <td>Coinbase Beneficiary</td>
               <td>
-                <textarea
-                  className="pt-input"
-                  spellCheck={false}
-                  style={{ width: "200px", height: "100px" }}
-                  value={this.props.block.coinbaseBeneficiary}
-                  readOnly
-                />
+                <Key value={this.props.block.coinbaseBeneficiary} />
               </td>
               <td>This is the public key of your node</td>
             </tr>

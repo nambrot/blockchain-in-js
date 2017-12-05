@@ -25,10 +25,14 @@ class Blockchain {
     })
   }
 
-  longestChain() {
+  maxHeightBlock() {
     const blocks = values(this.blocks)
     const maxByHeight = maxBy(prop('height'))
     const maxHeightBlock = reduce(maxByHeight, blocks[0], blocks)
+    return maxHeightBlock;
+  }
+
+  longestChain() {
     const getParent = (x) => {
       if (x === undefined) {
         return false
@@ -36,7 +40,7 @@ class Blockchain {
 
       return [x, this.blocks[x.parentHash]]
     }
-    return reverse(unfold(getParent, maxHeightBlock))
+    return reverse(unfold(getParent, this.maxHeightBlock()))
   }
 
   createGenesisBlock() {
@@ -69,6 +73,11 @@ class Blockchain {
     const parent = this.blocks[block.parentHash];
     if (parent === undefined && parent.height + 1 !== block.height )
       return
+
+    // Add coinbase coin to the pool of the parent
+    const newUtxoPool = parent.utxoPool.clone();
+    newUtxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
+    block.utxoPool = newUtxoPool;
 
     this.blocks[block.hash] = block;
     rerender()

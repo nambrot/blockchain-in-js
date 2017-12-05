@@ -1,12 +1,14 @@
 import sha256 from 'crypto-js/sha256';
+import UTXOPool from './UTXOPool';
 const DIFFICULTY = 2
 
 class Block {
   constructor(opts) {
-    const { blockchain, parentHash, height, coinbaseBeneficiary, nonce } =
+    const { blockchain, parentHash, height, coinbaseBeneficiary, nonce, utxoPool } =
       {
         coinbaseBeneficiary: 'root',
         nonce: '',
+        utxoPool: new UTXOPool(),
         ...opts
       }
     this.blockchain = blockchain;
@@ -14,13 +16,17 @@ class Block {
     this.parentHash = parentHash;
     this.height = height;
     this.coinbaseBeneficiary = coinbaseBeneficiary
+    this.utxoPool = utxoPool
     this._setHash()
     // for visualization purposes
     this.expanded = true;
   }
 
+  isRoot() {
+    return this.parentHash === 'root'
+  }
   isValid() {
-    return this.parentHash === 'root' ||
+    return this.isRoot() ||
       (this.hash.substr(-DIFFICULTY) === "0".repeat(DIFFICULTY) &&
       this.hash === this._calculateHash())
   }

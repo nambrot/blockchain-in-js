@@ -1,24 +1,60 @@
-import React, { Component } from 'react';
-import BlockchainTree from "./BlockchainTree"
-import IdentityListItem from "./IdentityListItem"
+import React, { Component } from "react";
+import BlockchainTree from "./BlockchainTree";
+import IdentityListItem from "./IdentityListItem";
+import { Tab2, Tabs2, Tooltip } from "@blueprintjs/core";
+import UTXOPoolTable from "./UTXOPoolTable";
 import "../App.css";
 
 class BlockchainWelcome extends Component {
   render() {
     return (
       <div>
-        <div style={{width: '70%', display: 'inline-block'}}>
+        <div style={{ width: "65%", display: "inline-block" }}>
+          <h3>Blockchain Visualization</h3>
           <BlockchainTree
             blockchain={this.props.blockchain}
+            identities={this.props.identities}
             node={this.props.node}
           />
         </div>
-        <div style={{width: '20%', display: 'inline-block', verticalAlign: 'top'}}>
-          { Object.values(this.props.identities).map(identity => <IdentityListItem identity={identity} />)}
+        <div
+          style={{
+            width: "35%",
+            display: "inline-block",
+            verticalAlign: "top"
+          }}
+        >
+          <Tabs2>
+            <Tab2
+              id="utxo"
+              title="UTXOPool"
+              panel={
+                <div>
+                  <p>This is the <Tooltip className="pt-tooltip-indicator" inline={true} content={"A UTXO pool is a list of UTXOs, which are 'owned' by the public key, and can be 'spent' with the corresponding private key."}>UTXO pool</Tooltip> for the longest chain.</p>
+                  <UTXOPoolTable
+                    block={this.props.blockchain.maxHeightBlock()}
+                    identities={this.props.identities}
+                  />
+                </div>
+              }
+            />
+          </Tabs2>
+          <hr />
+          <Tabs2>
+            <Tab2
+              id="nodes"
+              title="Identities"
+              panel={Object.values(this.props.identities).map(identity => (
+                <IdentityListItem
+                  key={identity.publicKey}
+                  identity={identity}
+                />
+              ))}
+            />
+          </Tabs2>
         </div>
       </div>
-    )
-
+    );
   }
 }
 

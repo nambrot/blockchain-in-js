@@ -127,3 +127,58 @@ class Block {
 ```
 
 You should know enough of about blockchains and the way they enable to us record data as a ledger in order to understand how this can allows us to keep track of ownership of "coins". The next few steps will be about actually using the coins and making them useful in transactions.
+
+### Step 5: What really is a coin?
+
+As described in Step 4, a coin is just ownership over a public key with a private key. By walking down a chain of blocks, you can add up which public keys own how many coins. In reality, these are called Unspent Transaction Outputs (UTXOs), the transaction part will come shortly). To avoid having to traverse chains of blocks everytime we want to find out how many coins an address controls, we "cache" that knowledge with each block into a UTXO pool. Whenever we add a block to a parent, we just take the parents UTXO pool and add the coins of the coinbase beneficiary.
+
+```javascript
+class UTXOPool {
+  constructor(utxos = {}) {
+    this.utxos = utxos
+  }
+
+  addUTXO(publicKey, amount) {
+    if (this.utxos[publicKey]) {
+      this.utxos[publicKey].amount += amount
+    } else {
+      const utxo = new UTXO(publicKey, amount)
+      this.utxos[publicKey] = utxo
+    }
+  }
+
+  clone() {
+    return new UTXOPool(clone(this.utxos))
+  }
+}
+
+class Blockchain {
+  _addBlock(block) {
+    if (!block.isValid())
+      return
+    if (this.containsBlock(block))
+      return
+
+    // check that the parent is actually existent and the advertised height is correct
+    const parent = this.blocks[block.parentHash];
+    if (parent === undefined && parent.height + 1 !== block.height )
+      return
+
+    // Add coinbase coin to the pool of the parent
+    const newUtxoPool = parent.utxoPool.clone();
+    newUtxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
+    block.utxoPool = newUtxoPool;
+
+    this.blocks[block.hash] = block;
+    rerender()
+  }
+}
+```
+
+As you can see, if we keep mining more blocks, we keep accumulating coins.
+
+![utxopool](https://user-images.githubusercontent.com/571810/33613173-ec3851de-d9a1-11e7-8a2d-90adce353ac5.gif)
+
+This way, you should also start the see of how the blockchain acts as a ledger, but also how it is inherently volatile. A fork in the blockchain will yield different UTXOPools and thus different assertions over coins (which is why securing consensus is so important) as you can see in the GIF below. That's why it is generally recommended to wait a certain number of blocks until you can consider a transaction to be settled, otherwise a fork can invalidate what you assumed to be the state of the ledger.
+
+![51attack](https://user-images.githubusercontent.com/571810/33613179-f1c861c0-d9a1-11e7-8366-4064cec2e95b.gif)

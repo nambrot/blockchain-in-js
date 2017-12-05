@@ -93,6 +93,7 @@ class BlockchainWelcome extends Component {
           <DetailBlock
             block={this.state.showBlock}
             onCancel={this.closeShowBlock}
+            identities={this.props.identities}
           />
         </Dialog>
       </div>
