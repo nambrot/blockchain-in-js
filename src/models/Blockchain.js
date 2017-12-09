@@ -74,10 +74,29 @@ class Blockchain {
     if (parent === undefined && parent.height + 1 !== block.height )
       return
 
-    // Add coinbase coin to the pool of the parent
+    // clone the utxo pool of the parent and reconcile with the block
     const newUtxoPool = parent.utxoPool.clone();
-    newUtxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
     block.utxoPool = newUtxoPool;
+
+    // Add coinbase coin to the pool
+    block.utxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
+
+    // Reapply transactions to validate them
+    const transactions = block.transactions
+    block.transactions = {}
+    let containsInvalidTransactions = false;
+
+    Object.values(transactions).forEach(transaction => {
+      if (block.isValidTransaction(transaction.inputPublicKey, transaction.amount)) {
+        block.addTransaction(transaction.inputPublicKey, transaction.outputPublicKey, transaction.amount)
+      } else {
+        containsInvalidTransactions = true
+      }
+    })
+
+    // If we found any invalid transactions, dont add the block
+    if (containsInvalidTransactions)
+      return
 
     this.blocks[block.hash] = block;
     rerender()

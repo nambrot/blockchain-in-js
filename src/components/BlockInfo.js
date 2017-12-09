@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import Key from "./Key";
 
 export default class BlockInfo extends Component {
   render() {
@@ -11,7 +12,15 @@ export default class BlockInfo extends Component {
           </tr>
           <tr>
             <td>Parent Hash</td>
-            <td>"{this.props.block.parentHash}"</td>
+            <td>
+              <textarea
+                className="pt-input"
+                spellCheck={false}
+                style={{ width: "200px", height: "100px" }}
+                value={this.props.block.parentHash}
+                readOnly
+              />
+            </td>
           </tr>
           <tr>
             <td />
@@ -19,7 +28,25 @@ export default class BlockInfo extends Component {
           </tr>
           <tr>
             <td>Coinbase Beneficiary</td>
-            <td>"{this.props.block.coinbaseBeneficiary}"</td>
+            <td>
+              <Key value={this.props.block.coinbaseBeneficiary} />
+            </td>
+          </tr>
+          <tr>
+            <td />
+            <td>+</td>
+          </tr>
+          <tr>
+            <td>Combined Transactions Hash </td>
+            <td>
+              <textarea
+                className="pt-input"
+                spellCheck={false}
+                style={{ width: "200px", height: "100px" }}
+                value={this.props.block.combinedTransactionsHash()}
+                readOnly
+              />
+            </td>
           </tr>
           <tr>
             <td />
@@ -27,7 +54,15 @@ export default class BlockInfo extends Component {
           </tr>
           <tr>
             <td>Nonce</td>
-            <td>"{this.props.block.nonce}"</td>
+            <td>
+              <textarea
+                className="pt-input"
+                spellCheck={false}
+                style={{ width: "200px", height: "100px" }}
+                value={this.props.block.nonce}
+                readOnly
+              />
+            </td>
             <td />
           </tr>
           <tr>
@@ -36,7 +71,15 @@ export default class BlockInfo extends Component {
           </tr>
           <tr>
             <td>Hash</td>
-            <td>"{this.props.block.hash}"</td>
+            <td>
+              <textarea
+                className="pt-input"
+                spellCheck={false}
+                style={{ width: "200px", height: "100px" }}
+                value={this.props.block.hash}
+                readOnly
+              />
+            </td>
           </tr>
         </tbody>
       </table>

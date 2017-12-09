@@ -1,14 +1,17 @@
 import sha256 from 'crypto-js/sha256';
 import UTXOPool from './UTXOPool';
+import Transaction from './Transaction';
+import { map } from "ramda"
 const DIFFICULTY = 2
 
 class Block {
   constructor(opts) {
-    const { blockchain, parentHash, height, coinbaseBeneficiary, nonce, utxoPool } =
+    const { blockchain, parentHash, height, coinbaseBeneficiary, nonce, utxoPool, transactions } =
       {
         coinbaseBeneficiary: 'root',
         nonce: '',
         utxoPool: new UTXOPool(),
+        transactions: {},
         ...opts
       }
     this.blockchain = blockchain;
@@ -17,6 +20,7 @@ class Block {
     this.height = height;
     this.coinbaseBeneficiary = coinbaseBeneficiary
     this.utxoPool = utxoPool
+    this.transactions = transactions
     this._setHash()
     // for visualization purposes
     this.expanded = true;
@@ -32,17 +36,46 @@ class Block {
   }
 
   createChild(coinbaseBeneficiary) {
-    return new Block({
+    const block = new Block({
       blockchain: this.blockchain,
       parentHash: this.hash,
       height: this.height + 1,
+      utxoPool: this.utxoPool.clone(),
       coinbaseBeneficiary
     })
+
+    // For convenience, allow the miner to immediately spend the coinbase coins
+    block.utxoPool.addUTXO(coinbaseBeneficiary, 12.5)
+
+    return block
+  }
+
+  addTransaction(inputPublicKey, outputPublicKey, amount) {
+    if (!this.isValidTransaction(inputPublicKey, amount))
+      return
+    const transaction = new Transaction(inputPublicKey, outputPublicKey, amount)
+    this.transactions[transaction.hash] = transaction
+    this.utxoPool.handleTransaction(transaction)
+    this._setHash();
+  }
+
+  isValidTransaction(inputPublicKey, amount) {
+    return this.utxoPool.isValidTransaction(inputPublicKey, amount)
+  }
+
+  addingTransactionErrorMessage(inputPublicKey, amount) {
+    return this.utxoPool.addingTransactionErrorMessage(inputPublicKey, amount)
   }
 
   setNonce(nonce) {
     this.nonce = nonce
     this._setHash()
+  }
+
+  combinedTransactionsHash() {
+    if (Object.values(this.transactions).length === 0)
+      return "No Transactions in Block"
+    return sha256(Object.values(this.transactions).map(tx => tx.hash).join(''))
   }
 
   toJSON() {
@@ -51,7 +84,8 @@ class Block {
       nonce: this.nonce,
       parentHash: this.parentHash,
       height: this.height,
-      coinbaseBeneficiary: this.coinbaseBeneficiary
+      coinbaseBeneficiary: this.coinbaseBeneficiary,
+      transactions: map(transaction => transaction.toJSON(), this.transactions)
     }
   }
 
@@ -60,7 +94,7 @@ class Block {
   }
 
   _calculateHash() {
-    return sha256(this.nonce + this.parentHash + this.coinbaseBeneficiary).toString()
+    return sha256(this.nonce + this.parentHash + this.coinbaseBeneficiary + this.combinedTransactionsHash()).toString()
   }
 }
 

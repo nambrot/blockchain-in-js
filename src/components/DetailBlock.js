@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Tab2, Tabs2 } from "@blueprintjs/core";
 import BlockInfo from "./BlockInfo";
 import UTXOPoolTable from "./UTXOPoolTable";
+import TransactionTable from "./TransactionTable";
 class DetailBlock extends Component {
   render() {
     return (
@@ -13,14 +14,14 @@ class DetailBlock extends Component {
             panel={<BlockInfo block={this.props.block} />}
           />
           <Tab2
+            id="transactions"
+            title="Transactions"
+            panel={<TransactionTable block={this.props.block} />}
+          />
+          <Tab2
             id="utxopool"
             title="UTXOPool"
-            panel={
-              <UTXOPoolTable
-                block={this.props.block}
-                identities={this.props.identities}
-              />
-            }
+            panel={<UTXOPoolTable block={this.props.block} />}
           />
         </Tabs2>
       </div>

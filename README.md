@@ -182,3 +182,84 @@ As you can see, if we keep mining more blocks, we keep accumulating coins.
 This way, you should also start the see of how the blockchain acts as a ledger, but also how it is inherently volatile. A fork in the blockchain will yield different UTXOPools and thus different assertions over coins (which is why securing consensus is so important) as you can see in the GIF below. That's why it is generally recommended to wait a certain number of blocks until you can consider a transaction to be settled, otherwise a fork can invalidate what you assumed to be the state of the ledger.
 
 ![51attack](https://user-images.githubusercontent.com/571810/33613179-f1c861c0-d9a1-11e7-8366-4064cec2e95b.gif)
+
+### Step 5: You get a coin! You get a coin!
+
+We are getting very close to have this be a usable blockchain. The only thing we are really lacking is the ability to send someone a coin. We are finally getting to transactions. And it's actually pretty simple:
+
+```javascript
+class Transaction {
+  constructor(inputPublicKey, outputPublicKey, amount) {
+    this.inputPublicKey = inputPublicKey
+    this.outputPublicKey = outputPublicKey
+    this.amount = amount
+    this._setHash()
+  }
+
+  _setHash() {
+    this.hash = this._calculateHash()
+  }
+
+  _calculateHash() {
+    return sha256(this.inputPublicKey + this.outputPublicKey + this.amount).toString()
+  }
+}
+```
+
+A transaction is simply a declaration to move ownership from one public key to the other, thus all we have to record in a transaction is the public key that has any coins, the target public key and the amount of coins we want to transfer. (In real Bitcoin, UTXOs have to be fully consumed and can have multiple inputs and outputs.) We obviously need to make sure that people only spend coins that exist. We do that with the UTXOPool which keeps track of "balances".
+
+```javascript
+class UTXOPool {
+  handleTransaction(transaction) {
+    if (!this.isValidTransaction(transaction.inputPublicKey, transaction.amount))
+      return
+    const inputUTXO = this.utxos[transaction.inputPublicKey];
+    inputUTXO.amount -= transaction.amount
+    if (inputUTXO.amount === 0)
+      delete this.utxos[transaction.inputPublicKey]
+    this.addUTXO(transaction.outputPublicKey, transaction.amount)
+  }
+
+  isValidTransaction(inputPublicKey, amount) {
+    const utxo = this.utxos[inputPublicKey]
+    return utxo !== undefined && utxo.amount >= amount && amount > 0
+  }
+}
+```
+
+Since we add the hashes of the transactions to the computation of the block hash, other nodes in the network can easily verify that the transactions are 1. valid given a block's ascendants and 2. came from a node that had to do the "proof-of-work".
+
+```javascript
+class Blockchain {
+  _addBlock(block) {
+    // ...
+    const newUtxoPool = parent.utxoPool.clone();
+    block.utxoPool = newUtxoPool;
+
+    // Add coinbase coin to the pool
+    block.utxoPool.addUTXO(block.coinbaseBeneficiary, 12.5)
+
+    // Reapply transactions to validate them
+    const transactions = block.transactions
+    block.transactions = {}
+    let containsInvalidTransactions = false;
+
+    Object.values(transactions).forEach(transaction => {
+      if (block.isValidTransaction(transaction.inputPublicKey, transaction.amount)) {
+        block.addTransaction(transaction.inputPublicKey, transaction.outputPublicKey, transaction.amount)
+      } else {
+        containsInvalidTransactions = true
+      }
+    })
+
+    // If we found any invalid transactions, dont add the block
+    if (containsInvalidTransactions)
+      return
+    // ...
+  }
+}
+```
+
+You should recognize an additional method of keeping miners "honest". If miners include transactions that are invalid, peer nodes will reject the block and thus not consider it to be part of the longest chain. Thus we maintain concensus over valid transactions. Here is everything in GIF-form:
+
+![addingtx](https://user-images.githubusercontent.com/571810/33800311-3746ef66-dd0b-11e7-9427-64c0053a4d5e.gif)
