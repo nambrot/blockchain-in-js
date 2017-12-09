@@ -75,7 +75,7 @@ class BlockchainWelcome extends Component {
           onClose={this.closeAddBlock}
           transitionDuration={50}
           title="Add block"
-          style={{width: '70%'}}
+          style={{width: '95%'}}
         >
           <NewBlock
             block={this.state.addBlock}

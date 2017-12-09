@@ -11,12 +11,16 @@ import { generatePair } from './crypto'
 
 const defaultBlockchain = new Blockchain('Bitcoin')
 
-const pair = generatePair();
+function createIdentity() {
+  const pair = generatePair();
 
-const identity = {
-  name: "Node " + pair.publicKey.substr(0, 10),
-  ...pair
+  return {
+    name: "Node " + pair.publicKey.substr(0, 10),
+    ...pair
+  }
 }
+
+const identity = createIdentity()
 
 const identities = {}
 identities[identity.publicKey] = identity
@@ -30,27 +34,38 @@ let state = {
 
 window.state = state
 
-const action = function(action) {
-  console.log(action)
-  switch (action.type) {
+const action = function(actionPayload) {
+  console.log(actionPayload)
+  switch (actionPayload.type) {
     case 'PICK_BLOCKCHAIN':
-      if (action.name === '')
+      if (actionPayload.name === '')
         break;
-      let blockchain = find((bc) => bc.name === action.name)(state.blockchains)
+      let blockchain = find((bc) => bc.name === actionPayload.name)(state.blockchains)
       if (blockchain === undefined) {
-        blockchain = new Blockchain(action.name)
+        blockchain = new Blockchain(actionPayload.name)
         state.blockchains.push(blockchain);
       }
       state.selectedBlockchain = blockchain;
       break;
     case 'BLOCKCHAIN_BROADCAST':
-      action.names.forEach((name) => {
+      actionPayload.names.forEach((name) => {
         if (!any((b) => b.name === name)(state.blockchains)) {
           const blockchain = new Blockchain(name)
           state.blockchains.push(blockchain);
         }
       })
       break;
+    case 'ADD_IDENTITY': {
+      const identity = createIdentity()
+      state.identities[identity.publicKey] = identity
+      break;
+    }
+    case 'CHANGE_IDENTITY_NAME': {
+      const identity = state.identities[actionPayload.publicKey]
+      if (identity === undefined) break;
+      identity.name = actionPayload.name
+      break;
+    }
     case 'RERENDER':
       // do nothing really
       break;

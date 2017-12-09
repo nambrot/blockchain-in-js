@@ -1,17 +1,16 @@
 import React, { Component } from "react";
 import Key from "./Key";
+import classnames from "classnames";
+import { state } from "../store"
 
-class RootUTXOPoolTable extends Component {
-  render() {
-    return (<p>The root block has no unspent transaction outputs</p>)
+export default class UTXOPoolTable extends Component {
+  static defaultProps = {
+    onSelectRow: null
   }
-}
-
-class RealUTXOPoolTable extends Component {
   render() {
     return (
       <div>
-        <table className="pt-table .modifier">
+        <table className={classnames("pt-table", {"pt-interactive": this.props.onSelectRow !== null }) }>
           <thead>
             <tr>
               <th>Name (where known)</th>
@@ -21,9 +20,9 @@ class RealUTXOPoolTable extends Component {
           </thead>
           <tbody>
             {Object.values(this.props.block.utxoPool.utxos).map(utxo => {
-              const identity = this.props.identities[utxo.publicKey]
+              const identity = state.identities[utxo.publicKey]
               return (
-                <tr key={utxo.publicKey}>
+                <tr key={utxo.publicKey} onClick={() => this.props.onSelectRow !== null && this.props.onSelectRow(utxo)}>
                   <td>{identity && identity.name}</td>
                   <td><Key value={utxo.publicKey} /></td>
                   <td>{utxo.amount}</td>
@@ -34,14 +33,5 @@ class RealUTXOPoolTable extends Component {
         </table>
       </div>
     );
-  }
-}
-
-export default class UTXOPoolTable extends Component {
-  render() {
-    if (this.props.block.isRoot())
-      return <RootUTXOPoolTable />
-    else
-      return <RealUTXOPoolTable block={this.props.block} identities={this.props.identities} />
   }
 }
