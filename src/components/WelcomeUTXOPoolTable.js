@@ -12,7 +12,8 @@ export default class WelcomeUTXOPoolTable extends Component {
     inputPublicKey: "",
     outputPublicKey: "",
     transactionAmount: 0,
-    fee: 0
+    fee: 0,
+    signature: ""
   };
 
   onChangeInputPublicKey = inputPublicKey => {
@@ -27,13 +28,17 @@ export default class WelcomeUTXOPoolTable extends Component {
   onChangeFee = evt => {
     this.setState({ fee: parseFloat(evt.target.value) || 0 });
   };
+  onChangeSignature = signature => {
+    this.setState({ signature });
+  };
   exitAddingTransaction = () => {
     this.setState({
       isAddingTransaction: false,
       inputPublicKey: "",
       outputPublicKey: "",
       amount: 0,
-      fee: 0
+      fee: 0,
+      signature: ""
     });
   };
 
@@ -42,7 +47,8 @@ export default class WelcomeUTXOPoolTable extends Component {
       this.state.inputPublicKey,
       this.state.outputPublicKey,
       this.state.transactionAmount,
-      this.state.fee
+      this.state.fee,
+      this.state.signature
     );
   }
 
@@ -50,13 +56,14 @@ export default class WelcomeUTXOPoolTable extends Component {
     return (
       this.state.inputPublicKey !== "" &&
       this.state.outputPublicKey !== "" &&
-      this.state.transactionAmount > 0
+      this.state.transactionAmount > 0 &&
+      this.authoringTransaction().hasValidSignature()
     );
   }
   broadcastTransaction = () => {
     publish("TRANSACTION_BROADCAST", {
       blockchainName: this.props.blockchain.name,
-      transaction: this.authoringTransaction()
+      transaction: this.authoringTransaction().toJSON()
     });
     this.exitAddingTransaction();
   };
@@ -86,6 +93,7 @@ export default class WelcomeUTXOPoolTable extends Component {
               onChangeOutputPublicKey={this.onChangeOutputPublicKey}
               onChangeTransactionAmount={this.onChangeTransactionAmount}
               onChangeFee={this.onChangeFee}
+              onChangeSignature={this.onChangeSignature}
               block={this.props.blockchain.maxHeightBlock()}
             />
             <div style={{ float: "right" }}>

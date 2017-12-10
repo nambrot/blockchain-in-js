@@ -10,7 +10,8 @@ export default class NewBlockTransactionList extends Component {
     inputPublicKey: "",
     outputPublicKey: "",
     transactionAmount: 0,
-    fee: 0
+    fee: 0,
+    signature: ""
   };
   onChangeInputPublicKey = inputPublicKey => {
     this.setState({ inputPublicKey });
@@ -24,13 +25,17 @@ export default class NewBlockTransactionList extends Component {
   onChangeFee = evt => {
     this.setState({ fee: parseFloat(evt.target.value) || 0 });
   };
+  onChangeSignature = signature => {
+    this.setState({ signature });
+  };
 
   authoringTransaction() {
     return new Transaction(
       this.state.inputPublicKey,
       this.state.outputPublicKey,
       this.state.transactionAmount,
-      this.state.fee
+      this.state.fee,
+      this.state.signature
     );
   }
   addTransaction = () => {
@@ -82,8 +87,9 @@ export default class NewBlockTransactionList extends Component {
       <div>
         <h5>Broadcasted Transactions</h5>
         <p>
-          Below listed you find transactions that have been broadcasted. You can
-          add them to the block.
+          Below listed you find transactions that have been broadcasted and are
+          valid on this block (i.e. have valid signatures and have spendable
+          UTXOs). You can add them to the block.
         </p>
         <TransactionTable
           transactions={this.applicableExternalTransactions()}
@@ -122,6 +128,7 @@ export default class NewBlockTransactionList extends Component {
               onChangeOutputPublicKey={this.onChangeOutputPublicKey}
               onChangeTransactionAmount={this.onChangeTransactionAmount}
               onChangeFee={this.onChangeFee}
+              onChangeSignature={this.onChangeSignature}
               block={this.props.block}
             />
             {this.shouldValidateTransaction() &&

@@ -1,6 +1,6 @@
 import Block from "./Block";
-import Transaction from "./Transaction";
-import { fromJSON } from "./Block";
+import { blockFromJSON } from "./Block";
+import { transactionFromJSON } from "./Transaction";
 import { rerender } from "../store";
 import { publish, subscribeTo } from "../network";
 import { maxBy, reduce, unfold, reverse, values, prop } from "ramda";
@@ -17,18 +17,13 @@ class Blockchain {
 
     subscribeTo("BLOCKS_BROADCAST", ({ blocks, blockchainName }) => {
       if (blockchainName === this.name) {
-        blocks.forEach(block => this._addBlock(fromJSON(this, block)));
+        blocks.forEach(block => this._addBlock(blockFromJSON(this, block)));
       }
     });
 
     subscribeTo("TRANSACTION_BROADCAST", ({ transaction, blockchainName }) => {
       if (blockchainName === this.name) {
-        this.pendingTransactions[transaction.hash] = new Transaction(
-          transaction.inputPublicKey,
-          transaction.outputPublicKey,
-          transaction.amount,
-          transaction.fee
-        );
+        this.pendingTransactions[transaction.hash] = transactionFromJSON(transaction);
       }
     });
 

@@ -4,6 +4,7 @@ import Key from "./Key";
 import { state } from "../store";
 import UTXOPoolTable from "./UTXOPoolTable";
 import AddIdentity from "./AddIdentity";
+import Signature from "./Signature";
 
 export default class NewTransaction extends Component {
   static defaultProps = {
@@ -12,9 +13,9 @@ export default class NewTransaction extends Component {
     onChangeInputPublicKey: () => {},
     onChangeOutputPublicKey: () => {},
     onChangeTransactionAmount: () => {},
-    onChangeFee: () => {}
+    onChangeFee: () => {},
+    onChangeSignature: () => {}
   };
-
   render() {
     return (
       <table>
@@ -26,6 +27,7 @@ export default class NewTransaction extends Component {
             <th>Receiver Public Key</th>
             <th>Amount</th>
             <th>Fee</th>
+            <th>Signature</th>
           </tr>
         </thead>
         <tbody>
@@ -113,6 +115,14 @@ export default class NewTransaction extends Component {
                 type="number"
                 onChange={this.props.onChangeFee}
                 value={this.props.transaction.fee}
+              />
+            </td>
+            <td>
+              <Signature
+                signature={this.props.transaction.signature}
+                messageToSign={this.props.transaction.hash}
+                publicKey={this.props.transaction.inputPublicKey}
+                onChangeSignature={this.props.onChangeSignature}
               />
             </td>
           </tr>

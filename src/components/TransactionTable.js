@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Icon } from "@blueprintjs/core";
 import Key from "./Key";
+import Signature from "./Signature";
 
 export default class TransactionTable extends Component {
   static defaultProps = {
@@ -21,6 +22,7 @@ export default class TransactionTable extends Component {
             <th>Receiver Public Key</th>
             <th>Amount</th>
             <th>Fee</th>
+            <th>Signature</th>
           </tr>
         </thead>
         <tbody>
@@ -64,6 +66,14 @@ export default class TransactionTable extends Component {
                   }}
                 >
                   {tx.fee}
+                </td>
+                <td>
+                  <Signature
+                    signature={tx.signature}
+                    messageToSign={tx.hash}
+                    publicKey={tx.inputPublicKey}
+                    isEditable={false}
+                  />
                 </td>
                 <td>{this.props.transactionAction(tx)}</td>
               </tr>

@@ -1,6 +1,6 @@
 # Build your own Blockchain in Javascript
 
-With all the hype about blockchains and cryptocurrencies, I decided to learn a bit more about it. And what better way to learn than to try to build it? Here you will find my attempts to build blockchains from their basic principles, and hopefully in the process it helps someone else to learn something from this as well. Let's get started
+With all the hype about blockchains and cryptocurrencies, I decided to learn a bit more about it. And what better way to learn than to try to build it? Here you will find my attempts to build blockchains from their basic principles, and hopefully in the process it helps someone else to learn something from this as well. Let's get started. Disclaimer: I took some liberties in some aspects where this blockchain will diverge from reality for pedagogical purposes.
 
 ## To run
 
@@ -318,3 +318,46 @@ class UTXOPool {
   }
 }
 ```
+
+# Step 8: Don't touch my money
+
+If you paid attention, you have noticed that it was possible for any node to spend any UTXO available. If that were the case in reality, it would be madness! Let's fix this by completing the ownership story. As we said above, ownership is really just the ability to prove that you have generated the private key. So to know if a transaction was truly the intention of the owner, all we have to do is request a signature of the transaction hash with the private key. Nodes can then verify that the signature is indeed valid for the transaction when they validate transaction of blocks they are receiving.
+
+```javascript
+class Transaction {
+  constructor(inputPublicKey, outputPublicKey, amount, fee, signature) {
+    this.inputPublicKey = inputPublicKey;
+    this.outputPublicKey = outputPublicKey;
+    this.amount = amount;
+    this.fee = fee;
+    this.signature = signature;
+    this._setHash();
+  }
+
+  hasValidSignature() {
+    return (
+      this.signature !== undefined &&
+      verifySignature(this.hash, this.signature, this.inputPublicKey)
+    );
+  }
+}
+
+class Block {
+  isValidTransaction(transaction) {
+    return (
+      this.utxoPool.isValidTransaction(transaction) &&
+      transaction.hasValidSignature()
+    );
+  }
+}
+```
+
+As seen in the GIF below, this will complete our blockchain by tieing control of UTXOs to the corresponding owner of the public key via signatures from their private key.
+
+![transactionsinging](https://user-images.githubusercontent.com/571810/33810869-ab96ec7c-ddd8-11e7-81bd-2435de149d83.gif)
+
+AND THATS IT!!! As you'll hopefully agree with me, blockchains are actually quite simple. So simple that [Bitcoin's original whitepaper](https://bitcoin.org/bitcoin.pdf) is only 8 pages. As we learned in this walkthrough, all you really need to know is some public key encryption knowledge and the fact that some hash functions are very hard to reverse.
+
+# Wait, there is more
+
+JK, there isn't as of yet. I might add merkle trees and segwit in the future, but for now, I hope this gives you a good overview of how blockchains such as Bitcoin work.

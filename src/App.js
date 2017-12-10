@@ -17,6 +17,7 @@ class App extends Component {
         <nav className='pt-navbar'>
           <div className="pt-navbar-group pt-align-left">
             <div className="pt-navbar-heading">Build your own Blockchain</div>
+            Made by&nbsp;<a href="https://twitter.com/nambrot" target="_blank">@nambrot</a>
           </div>
 
           <div className="pt-navbar-group pt-align-right">
