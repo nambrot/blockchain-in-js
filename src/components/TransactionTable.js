@@ -3,9 +3,13 @@ import { Icon } from "@blueprintjs/core";
 import Key from "./Key";
 
 export default class TransactionTable extends Component {
+  static defaultProps = {
+    noTransactionsText: "",
+    transactionAction: () => {}
+  };
   render() {
-    if (Object.keys(this.props.block.transactions).length === 0)
-      return <p>This block contains no transactions.</p>
+    if (Object.keys(this.props.transactions).length === 0)
+      return <p>{this.props.noTransactionsText}</p>;
 
     return (
       <table>
@@ -19,7 +23,7 @@ export default class TransactionTable extends Component {
           </tr>
         </thead>
         <tbody>
-          {Object.values(this.props.block.transactions).map(tx => {
+          {Object.values(this.props.transactions).map(tx => {
             return (
               <tr key={tx.hash}>
                 <td>
@@ -41,6 +45,7 @@ export default class TransactionTable extends Component {
                   <Key value={tx.outputPublicKey} />
                 </td>
                 <td>{tx.amount}</td>
+                <td>{this.props.transactionAction(tx)}</td>
               </tr>
             );
           })}

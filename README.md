@@ -263,3 +263,26 @@ class Blockchain {
 You should recognize an additional method of keeping miners "honest". If miners include transactions that are invalid, peer nodes will reject the block and thus not consider it to be part of the longest chain. Thus we maintain concensus over valid transactions. Here is everything in GIF-form:
 
 ![addingtx](https://user-images.githubusercontent.com/571810/33800311-3746ef66-dd0b-11e7-9427-64c0053a4d5e.gif)
+
+# Step 6: I don't do math.
+
+What if you (or more specifically your computers) are bad at math, does that mean you don't get to have your transactions added to the blockchain? That would be terrible! Instead, as a non-mining node, let's add the ability to broadcast a transaction, that a different mining node can then add to their block:
+
+```javascript
+class Blockchain {
+  constructor() {
+    // ...
+    subscribeTo("TRANSACTION_BROADCAST", ({ transaction, blockchainName }) => {
+      if (blockchainName === this.name) {
+        this.pendingTransactions[transaction.hash] = new Transaction(
+          transaction.inputPublicKey,
+          transaction.outputPublicKey,
+          transaction.amount
+        );
+      }
+    });
+  }
+}
+```
+
+![txbroadcast](https://user-images.githubusercontent.com/571810/33802204-a2f0ed8c-dd3f-11e7-8fa7-3ba84f01e97d.gif)

@@ -16,7 +16,7 @@ class DetailBlock extends Component {
           <Tab2
             id="transactions"
             title="Transactions"
-            panel={<TransactionTable block={this.props.block} />}
+            panel={<TransactionTable transactions={this.props.block.transactions} />}
           />
           <Tab2
             id="utxopool"

@@ -56,6 +56,50 @@ export default class NewBlockTransactionList extends Component {
     );
   }
 
+  applicableExternalTransactions() {
+    return Object.values(
+      this.props.block.blockchain.pendingTransactions
+    ).filter(
+      transaction =>
+        this.props.block.transactions[transaction.hash] === undefined &&
+        this.props.block.isValidTransaction(
+          transaction.inputPublicKey,
+          transaction.amount
+        )
+    );
+  }
+
+  renderExternalTransactions() {
+    if (this.applicableExternalTransactions().length === 0) return null;
+
+    return (
+      <div>
+        <h5>Broadcasted Transactions</h5>
+        <p>
+          Below listed you find transactions that have been broadcasted. You can
+          add them to the block.
+        </p>
+        <TransactionTable
+          transactions={this.applicableExternalTransactions()}
+          noTransactionsText="This block contains no transactions."
+          transactionAction={transaction => (
+            <Button
+              text="Add Transaction"
+              onClick={() => {
+                this.props.block.addTransaction(
+                  transaction.inputPublicKey,
+                  transaction.outputPublicKey,
+                  transaction.amount
+                );
+                this.props.rerender();
+              }}
+            />
+          )}
+        />
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -65,7 +109,10 @@ export default class NewBlockTransactionList extends Component {
             will contain the mining reward of the coinbase that you can spend
             immediately
           </p>
-          <TransactionTable block={this.props.block} />
+          <TransactionTable
+            transactions={this.props.block.transactions}
+            noTransactionsText="This block contains no transactions."
+          />
           <Collapse isOpen={this.state.isAddingNewTransaction}>
             <NewTransaction
               inputPublicKey={this.state.inputPublicKey}
@@ -97,6 +144,8 @@ export default class NewBlockTransactionList extends Component {
                 : "Create Transaction"
             }
           />
+
+          {this.renderExternalTransactions()}
         </div>
       </div>
     );

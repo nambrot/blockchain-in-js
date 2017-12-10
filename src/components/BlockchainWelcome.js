@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import BlockchainTree from "./BlockchainTree";
 import IdentityListItem from "./IdentityListItem";
 import { Tab2, Tabs2, Tooltip } from "@blueprintjs/core";
-import UTXOPoolTable from "./UTXOPoolTable";
+import WelcomeUTXOPoolTable from "./WelcomeUTXOPoolTable";
 import "../App.css";
 import AddIdentity from "./AddIdentity";
+
 class BlockchainWelcome extends Component {
   render() {
     return (
@@ -41,14 +42,13 @@ class BlockchainWelcome extends Component {
                     >
                       UTXO pool
                     </Tooltip>{" "}
-                    for the longest chain.
+                    for the longest chain. You can click on UTXOs to broadcast a
+                    transaction.
                   </p>
                   {this.props.blockchain.maxHeightBlock().isRoot() ? (
                     <p>The root block has no unspent transaction outputs</p>
                   ) : (
-                    <UTXOPoolTable
-                      block={this.props.blockchain.maxHeightBlock()}
-                    />
+                    <WelcomeUTXOPoolTable blockchain={this.props.blockchain} />
                   )}
                 </div>
               }
