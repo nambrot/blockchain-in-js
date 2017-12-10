@@ -8,7 +8,8 @@ export default class NewBlockTransactionList extends Component {
     isAddingNewTransaction: false,
     inputPublicKey: "",
     outputPublicKey: "",
-    transactionAmount: 0
+    transactionAmount: 0,
+    fee: 0
   };
   onChangeInputPublicKey = inputPublicKey => {
     this.setState({ inputPublicKey });
@@ -19,18 +20,23 @@ export default class NewBlockTransactionList extends Component {
   onChangeTransactionAmount = evt => {
     this.setState({ transactionAmount: parseFloat(evt.target.value) || 0 });
   };
+  onChangeFee = evt => {
+    this.setState({ fee: parseFloat(evt.target.value) || 0 });
+  };
   addTransaction = () => {
     if (this.state.isAddingNewTransaction) {
       this.props.block.addTransaction(
         this.state.inputPublicKey,
         this.state.outputPublicKey,
-        this.state.transactionAmount
+        this.state.transactionAmount,
+        this.state.fee
       );
       this.setState({
         isAddingNewTransaction: false,
         inputPublicKey: "",
         outputPublicKey: "",
-        transactionAmount: 0
+        transactionAmount: 0,
+        fee: 0
       });
       this.props.rerender();
     } else {
@@ -45,14 +51,16 @@ export default class NewBlockTransactionList extends Component {
   isValidTransaction() {
     return this.props.block.isValidTransaction(
       this.state.inputPublicKey,
-      this.state.transactionAmount
+      this.state.transactionAmount,
+      this.state.fee
     );
   }
 
   addingTransactionErrorMessage() {
     return this.props.block.addingTransactionErrorMessage(
       this.state.inputPublicKey,
-      this.state.transactionAmount
+      this.state.transactionAmount,
+      this.state.fee
     );
   }
 
@@ -64,7 +72,8 @@ export default class NewBlockTransactionList extends Component {
         this.props.block.transactions[transaction.hash] === undefined &&
         this.props.block.isValidTransaction(
           transaction.inputPublicKey,
-          transaction.amount
+          transaction.amount,
+          transaction.fee
         )
     );
   }
@@ -89,7 +98,8 @@ export default class NewBlockTransactionList extends Component {
                 this.props.block.addTransaction(
                   transaction.inputPublicKey,
                   transaction.outputPublicKey,
-                  transaction.amount
+                  transaction.amount,
+                  transaction.fee
                 );
                 this.props.rerender();
               }}
@@ -118,9 +128,11 @@ export default class NewBlockTransactionList extends Component {
               inputPublicKey={this.state.inputPublicKey}
               outputPublicKey={this.state.outputPublicKey}
               transactionAmount={this.state.transactionAmount}
+              fee={this.state.fee}
               onChangeInputPublicKey={this.onChangeInputPublicKey}
               onChangeOutputPublicKey={this.onChangeOutputPublicKey}
               onChangeTransactionAmount={this.onChangeTransactionAmount}
+              onChangeFee={this.onChangeFee}
               block={this.props.block}
             />
             {this.shouldValidateTransaction() &&

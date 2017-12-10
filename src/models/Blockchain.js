@@ -26,7 +26,8 @@ class Blockchain {
         this.pendingTransactions[transaction.hash] = new Transaction(
           transaction.inputPublicKey,
           transaction.outputPublicKey,
-          transaction.amount
+          transaction.amount,
+          transaction.fee
         );
       }
     });
@@ -90,7 +91,7 @@ class Blockchain {
     const parent = this.blocks[block.parentHash];
     if (parent === undefined && parent.height + 1 !== block.height) return;
 
-    const isParentMaxHeight = this.maxHeightBlock().hash == parent.hash;
+    const isParentMaxHeight = this.maxHeightBlock().hash === parent.hash;
 
     // clone the utxo pool of the parent and reconcile with the block
     const newUtxoPool = parent.utxoPool.clone();
@@ -106,12 +107,13 @@ class Blockchain {
 
     Object.values(transactions).forEach(transaction => {
       if (
-        block.isValidTransaction(transaction.inputPublicKey, transaction.amount)
+        block.isValidTransaction(transaction.inputPublicKey, transaction.amount, transaction.fee)
       ) {
         block.addTransaction(
           transaction.inputPublicKey,
           transaction.outputPublicKey,
-          transaction.amount
+          transaction.amount,
+          transaction.fee
         );
 
         // if we have the transaction as a pending one on the chain, remove it from the pending pool if we are at max height

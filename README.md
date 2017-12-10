@@ -286,3 +286,35 @@ class Blockchain {
 ```
 
 ![txbroadcast](https://user-images.githubusercontent.com/571810/33802204-a2f0ed8c-dd3f-11e7-8fa7-3ba84f01e97d.gif)
+
+
+# Step 7: No free lunches
+
+Unless you subscribe to the most extreme interpretations of "love thy neighbor", people generally don't like to do things free for others. So why would a mining node add a transaction for a non-mining node? You are right, they wouldn't. So let's add some incentives for them with a transaction fee that we can specify as a transaction author to increase the chances of some mining node adding our transaction to their block.
+
+```javascript
+class Block {
+  addTransaction(inputPublicKey, outputPublicKey, amount, fee) {
+    if (!this.isValidTransaction(inputPublicKey, amount, fee))
+      return
+    const transaction = new Transaction(inputPublicKey, outputPublicKey, amount, fee)
+    this.transactions[transaction.hash] = transaction
+    this.utxoPool.handleTransaction(transaction, this.coinbaseBeneficiary)
+    this._setHash();
+  }
+}
+
+class UTXOPool {
+  handleTransaction(transaction, feeReceiver) {
+    if (!this.isValidTransaction(transaction.inputPublicKey, transaction.amount, transaction.fee))
+      return
+    const inputUTXO = this.utxos[transaction.inputPublicKey];
+    inputUTXO.amount -= transaction.amount
+    inputUTXO.amount -= transaction.fee
+    if (inputUTXO.amount === 0)
+      delete this.utxos[transaction.inputPublicKey]
+    this.addUTXO(transaction.outputPublicKey, transaction.amount)
+    this.addUTXO(feeReceiver, transaction.fee)
+  }
+}
+```

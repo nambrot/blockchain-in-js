@@ -7,14 +7,16 @@ import AddIdentity from "./AddIdentity";
 
 export default class NewTransaction extends Component {
   static defaultProps = {
-    inputPublicKey: '',
-    outputPublicKey: '',
+    inputPublicKey: "",
+    outputPublicKey: "",
     transactionAmount: 0,
+    fee: 0,
     block: null,
     onChangeInputPublicKey: () => {},
     onChangeOutputPublicKey: () => {},
-    onChangeTransactionAmount: () => {}
-  }
+    onChangeTransactionAmount: () => {},
+    onChangeFee: () => {}
+  };
 
   render() {
     return (
@@ -25,6 +27,7 @@ export default class NewTransaction extends Component {
             <th />
             <th>Receiver Public Key</th>
             <th>Amount</th>
+            <th>Fee</th>
           </tr>
         </thead>
         <tbody>
@@ -65,7 +68,9 @@ export default class NewTransaction extends Component {
                         <a
                           key={identity.publicKey}
                           onClick={() =>
-                            this.props.onChangeOutputPublicKey(identity.publicKey)
+                            this.props.onChangeOutputPublicKey(
+                              identity.publicKey
+                            )
                           }
                         >
                           <li>{identity.name}</li>
@@ -88,6 +93,19 @@ export default class NewTransaction extends Component {
                 type="number"
                 onChange={this.props.onChangeTransactionAmount}
                 value={this.props.transactionAmount}
+              />
+            </td>
+            <td>
+              <input
+                style={{
+                  height: "100px",
+                  width: "100px",
+                  fontSize: "34px",
+                  textAlign: "center"
+                }}
+                type="number"
+                onChange={this.props.onChangeFee}
+                value={this.props.fee}
               />
             </td>
           </tr>

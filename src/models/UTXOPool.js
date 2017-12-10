@@ -15,29 +15,31 @@ export default class UTXOPool {
     }
   }
 
-  handleTransaction(transaction) {
-    if (!this.isValidTransaction(transaction.inputPublicKey, transaction.amount))
+  handleTransaction(transaction, feeReceiver) {
+    if (!this.isValidTransaction(transaction.inputPublicKey, transaction.amount, transaction.fee))
       return
     const inputUTXO = this.utxos[transaction.inputPublicKey];
     inputUTXO.amount -= transaction.amount
+    inputUTXO.amount -= transaction.fee
     if (inputUTXO.amount === 0)
       delete this.utxos[transaction.inputPublicKey]
     this.addUTXO(transaction.outputPublicKey, transaction.amount)
+    this.addUTXO(feeReceiver, transaction.fee)
   }
 
-  isValidTransaction(inputPublicKey, amount) {
+  isValidTransaction(inputPublicKey, amount, fee) {
     const utxo = this.utxos[inputPublicKey]
-    return utxo !== undefined && utxo.amount >= amount && amount > 0
+    return utxo !== undefined && utxo.amount >= (amount + fee) && amount > 0
   }
 
-  addingTransactionErrorMessage(inputPublicKey, amount) {
+  addingTransactionErrorMessage(inputPublicKey, amount, fee) {
     const utxo = this.utxos[inputPublicKey]
     if (utxo === undefined)
       return "No UTXO was associated with this public key"
     if (amount === 0)
       return "Amount has to be at least 0"
-    if (utxo.amount < amount)
-      return `UTXO associated with this public key (${utxo.amount}) does not cover desired amount (${amount})`
+    if (utxo.amount < amount + fee)
+      return `UTXO associated with this public key (${utxo.amount}) does not cover desired amount (${amount}) and fee (${fee})`
   }
 
   clone() {

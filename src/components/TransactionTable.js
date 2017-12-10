@@ -20,6 +20,7 @@ export default class TransactionTable extends Component {
             <th />
             <th>Receiver Public Key</th>
             <th>Amount</th>
+            <th>Fee</th>
           </tr>
         </thead>
         <tbody>
@@ -44,7 +45,26 @@ export default class TransactionTable extends Component {
                 <td>
                   <Key value={tx.outputPublicKey} />
                 </td>
-                <td>{tx.amount}</td>
+                <td
+                  style={{
+                    height: "100px",
+                    width: "100px",
+                    fontSize: "34px",
+                    textAlign: "center"
+                  }}
+                >
+                  {tx.amount}
+                </td>
+                <td
+                  style={{
+                    height: "100px",
+                    width: "100px",
+                    fontSize: "34px",
+                    textAlign: "center"
+                  }}
+                >
+                  {tx.fee}
+                </td>
                 <td>{this.props.transactionAction(tx)}</td>
               </tr>
             );

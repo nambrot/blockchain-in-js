@@ -11,7 +11,8 @@ export default class WelcomeUTXOPoolTable extends Component {
     isAddingTransaction: false,
     inputPublicKey: "",
     outputPublicKey: "",
-    transactionAmount: 0
+    transactionAmount: 0,
+    fee: 0,
   };
 
   onChangeInputPublicKey = inputPublicKey => {
@@ -23,12 +24,16 @@ export default class WelcomeUTXOPoolTable extends Component {
   onChangeTransactionAmount = evt => {
     this.setState({ transactionAmount: parseFloat(evt.target.value) || 0 });
   };
+  onChangeFee = evt => {
+    this.setState({ fee: parseFloat(evt.target.value) || 0 });
+  };
   exitAddingTransaction = () => {
     this.setState({
       isAddingTransaction: false,
       inputPublicKey: "",
       outputPublicKey: "",
-      amount: 0
+      amount: 0,
+      fee: 0
     });
   };
   isValidTransaction() {
@@ -44,7 +49,8 @@ export default class WelcomeUTXOPoolTable extends Component {
       transaction: new Transaction(
         this.state.inputPublicKey,
         this.state.outputPublicKey,
-        this.state.transactionAmount
+        this.state.transactionAmount,
+        this.state.fee
       )
     });
     this.exitAddingTransaction();
@@ -72,9 +78,11 @@ export default class WelcomeUTXOPoolTable extends Component {
               inputPublicKey={this.state.inputPublicKey}
               outputPublicKey={this.state.outputPublicKey}
               transactionAmount={this.state.transactionAmount}
+              fee={this.state.fee}
               onChangeInputPublicKey={this.onChangeInputPublicKey}
               onChangeOutputPublicKey={this.onChangeOutputPublicKey}
               onChangeTransactionAmount={this.onChangeTransactionAmount}
+              onChangeFee={this.onChangeFee}
               block={this.props.blockchain.maxHeightBlock()}
             />
             <div style={{ float: "right" }}>

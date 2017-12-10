@@ -1,10 +1,11 @@
 import sha256 from 'crypto-js/sha256';
 
 export default class Transaction {
-  constructor(inputPublicKey, outputPublicKey, amount) {
+  constructor(inputPublicKey, outputPublicKey, amount, fee) {
     this.inputPublicKey = inputPublicKey
     this.outputPublicKey = outputPublicKey
     this.amount = amount
+    this.fee = fee
     this._setHash()
   }
 
@@ -13,6 +14,7 @@ export default class Transaction {
       inputPublicKey: this.inputPublicKey,
       outputPublicKey: this.outputPublicKey,
       amount: this.amount,
+      fee: this.fee,
       hash: this.hash,
     }
   }
@@ -22,6 +24,6 @@ export default class Transaction {
   }
 
   _calculateHash() {
-    return sha256(this.inputPublicKey + this.outputPublicKey + this.amount).toString()
+    return sha256(this.inputPublicKey + this.outputPublicKey + this.amount + this.fee).toString()
   }
 }

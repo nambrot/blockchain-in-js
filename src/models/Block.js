@@ -50,21 +50,21 @@ class Block {
     return block
   }
 
-  addTransaction(inputPublicKey, outputPublicKey, amount) {
-    if (!this.isValidTransaction(inputPublicKey, amount))
+  addTransaction(inputPublicKey, outputPublicKey, amount, fee) {
+    if (!this.isValidTransaction(inputPublicKey, amount, fee))
       return
-    const transaction = new Transaction(inputPublicKey, outputPublicKey, amount)
+    const transaction = new Transaction(inputPublicKey, outputPublicKey, amount, fee)
     this.transactions[transaction.hash] = transaction
-    this.utxoPool.handleTransaction(transaction)
+    this.utxoPool.handleTransaction(transaction, this.coinbaseBeneficiary)
     this._setHash();
   }
 
-  isValidTransaction(inputPublicKey, amount) {
-    return this.utxoPool.isValidTransaction(inputPublicKey, amount)
+  isValidTransaction(inputPublicKey, amount, fee) {
+    return this.utxoPool.isValidTransaction(inputPublicKey, amount, fee)
   }
 
-  addingTransactionErrorMessage(inputPublicKey, amount) {
-    return this.utxoPool.addingTransactionErrorMessage(inputPublicKey, amount)
+  addingTransactionErrorMessage(inputPublicKey, amount, fee) {
+    return this.utxoPool.addingTransactionErrorMessage(inputPublicKey, amount, fee)
   }
 
   setNonce(nonce) {
