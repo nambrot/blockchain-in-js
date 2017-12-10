@@ -33,7 +33,7 @@ export default class Key extends Component {
         inline={true}
         position={Position.TOP}
       >
-        <Popover2>
+        <Popover2 autoFocus={false}>
           <textarea
             className="pt-input"
             spellCheck={false}
