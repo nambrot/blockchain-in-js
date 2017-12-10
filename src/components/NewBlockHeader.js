@@ -46,7 +46,7 @@ export default class NewBlockHeader extends Component {
                 <textarea
                   className="pt-input"
                   spellCheck={false}
-                  style={{ width: "200px", height: "100px" }}
+                  style={{ width: "150px", height: "75px" }}
                   value={this.props.block.parentHash}
                   readOnly
                 />
@@ -74,7 +74,7 @@ export default class NewBlockHeader extends Component {
                 <textarea
                   className="pt-input"
                   spellCheck={false}
-                  style={{ width: "200px", height: "100px" }}
+                  style={{ width: "150px", height: "75px" }}
                   value={this.props.block.combinedTransactionsHash()}
                   readOnly
                 />
@@ -94,7 +94,7 @@ export default class NewBlockHeader extends Component {
                 <textarea
                   className="pt-input"
                   spellCheck={false}
-                  style={{ width: "200px", height: "100px" }}
+                  style={{ width: "150px", height: "75px" }}
                   value={this.props.block.nonce}
                   onChange={this.changeNonce}
                 />
@@ -118,7 +118,7 @@ export default class NewBlockHeader extends Component {
                     "pt-intent-primary": this.props.block.isValid()
                   })}
                   spellCheck={false}
-                  style={{ width: "200px", height: "100px" }}
+                  style={{ width: "150px", height: "75px" }}
                   value={this.props.block.hash}
                   readOnly
                 />

@@ -38,7 +38,7 @@ export default class UTXOPool {
     const utxo = this.utxos[inputPublicKey]
     if (utxo === undefined)
       return "No UTXO was associated with this public key"
-    if (amount === 0)
+    if (amount <= 0)
       return "Amount has to be at least 0"
     if (utxo.amount < amount + fee)
       return `UTXO associated with this public key (${utxo.amount}) does not cover desired amount (${amount}) and fee (${fee})`

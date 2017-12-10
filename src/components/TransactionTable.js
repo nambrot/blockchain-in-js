@@ -31,7 +31,7 @@ export default class TransactionTable extends Component {
                   <textarea
                     className="pt-input"
                     spellCheck={false}
-                    style={{ width: "200px", height: "100px" }}
+                    style={{ width: "150px", height: "75px" }}
                     value={tx.hash}
                     readOnly
                   />

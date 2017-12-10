@@ -20,6 +20,7 @@ export default class NewTransaction extends Component {
       <table>
         <thead>
           <tr>
+            <th>Transaction Hash</th>
             <th>Sender Public Key</th>
             <th />
             <th>Receiver Public Key</th>
@@ -29,6 +30,15 @@ export default class NewTransaction extends Component {
         </thead>
         <tbody>
           <tr>
+            <td>
+              <textarea
+                className="pt-input"
+                spellCheck={false}
+                style={{ width: "150px", height: "75px" }}
+                value={this.props.transaction.hash}
+                readOnly
+              />
+            </td>
             <td>
               <Key
                 value={this.props.transaction.inputPublicKey}
@@ -82,8 +92,8 @@ export default class NewTransaction extends Component {
             <td>
               <input
                 style={{
-                  height: "100px",
-                  width: "100px",
+                  height: "75px",
+                  width: "75px",
                   fontSize: "34px",
                   textAlign: "center"
                 }}
@@ -95,8 +105,8 @@ export default class NewTransaction extends Component {
             <td>
               <input
                 style={{
-                  height: "100px",
-                  width: "100px",
+                  height: "75px",
+                  width: "75px",
                   fontSize: "34px",
                   textAlign: "center"
                 }}

@@ -50,7 +50,9 @@ export default class NewBlockTransactionList extends Component {
   };
 
   shouldValidateTransaction() {
-    return this.state.inputPublicKey !== "" && this.state.transactionAmount > 0;
+    return (
+      this.state.inputPublicKey !== "" && this.state.transactionAmount !== 0
+    );
   }
 
   isValidTransaction() {

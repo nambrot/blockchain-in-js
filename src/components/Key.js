@@ -38,8 +38,8 @@ export default class Key extends Component {
             className="pt-input"
             spellCheck={false}
             style={{
-              width: "200px",
-              height: "100px",
+              width: "150px",
+              height: "75px",
               borderWidth: "3px",
               borderStyle: "solid",
               borderColor: stringToColour(this.props.value)
