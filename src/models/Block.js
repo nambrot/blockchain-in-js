@@ -1,6 +1,5 @@
 import sha256 from 'crypto-js/sha256';
 import UTXOPool from './UTXOPool';
-import Transaction from './Transaction';
 import { map } from "ramda"
 const DIFFICULTY = 2
 
@@ -50,21 +49,20 @@ class Block {
     return block
   }
 
-  addTransaction(inputPublicKey, outputPublicKey, amount, fee) {
-    if (!this.isValidTransaction(inputPublicKey, amount, fee))
+  addTransaction(transaction) {
+    if (!this.isValidTransaction(transaction))
       return
-    const transaction = new Transaction(inputPublicKey, outputPublicKey, amount, fee)
     this.transactions[transaction.hash] = transaction
     this.utxoPool.handleTransaction(transaction, this.coinbaseBeneficiary)
     this._setHash();
   }
 
-  isValidTransaction(inputPublicKey, amount, fee) {
-    return this.utxoPool.isValidTransaction(inputPublicKey, amount, fee)
+  isValidTransaction(transaction) {
+    return this.utxoPool.isValidTransaction(transaction)
   }
 
-  addingTransactionErrorMessage(inputPublicKey, amount, fee) {
-    return this.utxoPool.addingTransactionErrorMessage(inputPublicKey, amount, fee)
+  addingTransactionErrorMessage(transaction) {
+    return this.utxoPool.addingTransactionErrorMessage(transaction)
   }
 
   setNonce(nonce) {

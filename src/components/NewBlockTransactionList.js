@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Collapse, Button, Callout } from "@blueprintjs/core";
 import TransactionTable from "./TransactionTable";
 import NewTransaction from "./NewTransaction";
+import Transaction from "../models/Transaction";
 
 export default class NewBlockTransactionList extends Component {
   state = {
@@ -23,14 +24,18 @@ export default class NewBlockTransactionList extends Component {
   onChangeFee = evt => {
     this.setState({ fee: parseFloat(evt.target.value) || 0 });
   };
+
+  authoringTransaction() {
+    return new Transaction(
+      this.state.inputPublicKey,
+      this.state.outputPublicKey,
+      this.state.transactionAmount,
+      this.state.fee
+    );
+  }
   addTransaction = () => {
     if (this.state.isAddingNewTransaction) {
-      this.props.block.addTransaction(
-        this.state.inputPublicKey,
-        this.state.outputPublicKey,
-        this.state.transactionAmount,
-        this.state.fee
-      );
+      this.props.block.addTransaction(this.authoringTransaction());
       this.setState({
         isAddingNewTransaction: false,
         inputPublicKey: "",
@@ -49,18 +54,12 @@ export default class NewBlockTransactionList extends Component {
   }
 
   isValidTransaction() {
-    return this.props.block.isValidTransaction(
-      this.state.inputPublicKey,
-      this.state.transactionAmount,
-      this.state.fee
-    );
+    return this.props.block.isValidTransaction(this.authoringTransaction());
   }
 
   addingTransactionErrorMessage() {
     return this.props.block.addingTransactionErrorMessage(
-      this.state.inputPublicKey,
-      this.state.transactionAmount,
-      this.state.fee
+      this.authoringTransaction()
     );
   }
 
@@ -70,11 +69,7 @@ export default class NewBlockTransactionList extends Component {
     ).filter(
       transaction =>
         this.props.block.transactions[transaction.hash] === undefined &&
-        this.props.block.isValidTransaction(
-          transaction.inputPublicKey,
-          transaction.amount,
-          transaction.fee
-        )
+        this.props.block.isValidTransaction(transaction)
     );
   }
 
@@ -95,12 +90,7 @@ export default class NewBlockTransactionList extends Component {
             <Button
               text="Add Transaction"
               onClick={() => {
-                this.props.block.addTransaction(
-                  transaction.inputPublicKey,
-                  transaction.outputPublicKey,
-                  transaction.amount,
-                  transaction.fee
-                );
+                this.props.block.addTransaction(transaction);
                 this.props.rerender();
               }}
             />
@@ -125,10 +115,7 @@ export default class NewBlockTransactionList extends Component {
           />
           <Collapse isOpen={this.state.isAddingNewTransaction}>
             <NewTransaction
-              inputPublicKey={this.state.inputPublicKey}
-              outputPublicKey={this.state.outputPublicKey}
-              transactionAmount={this.state.transactionAmount}
-              fee={this.state.fee}
+              transaction={this.authoringTransaction()}
               onChangeInputPublicKey={this.onChangeInputPublicKey}
               onChangeOutputPublicKey={this.onChangeOutputPublicKey}
               onChangeTransactionAmount={this.onChangeTransactionAmount}

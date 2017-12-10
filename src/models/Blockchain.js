@@ -106,15 +106,8 @@ class Blockchain {
     let containsInvalidTransactions = false;
 
     Object.values(transactions).forEach(transaction => {
-      if (
-        block.isValidTransaction(transaction.inputPublicKey, transaction.amount, transaction.fee)
-      ) {
-        block.addTransaction(
-          transaction.inputPublicKey,
-          transaction.outputPublicKey,
-          transaction.amount,
-          transaction.fee
-        );
+      if (block.isValidTransaction(transaction)) {
+        block.addTransaction(transaction);
 
         // if we have the transaction as a pending one on the chain, remove it from the pending pool if we are at max height
         if (isParentMaxHeight && this.pendingTransactions[transaction.hash])

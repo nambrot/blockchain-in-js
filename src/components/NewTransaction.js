@@ -7,10 +7,7 @@ import AddIdentity from "./AddIdentity";
 
 export default class NewTransaction extends Component {
   static defaultProps = {
-    inputPublicKey: "",
-    outputPublicKey: "",
-    transactionAmount: 0,
-    fee: 0,
+    transaction: null,
     block: null,
     onChangeInputPublicKey: () => {},
     onChangeOutputPublicKey: () => {},
@@ -34,7 +31,7 @@ export default class NewTransaction extends Component {
           <tr>
             <td>
               <Key
-                value={this.props.inputPublicKey}
+                value={this.props.transaction.inputPublicKey}
                 onChange={this.props.onChangeInputPublicKey}
                 readOnly={false}
                 tooltipText="Specify the public key of the sender"
@@ -56,7 +53,7 @@ export default class NewTransaction extends Component {
             </td>
             <td>
               <Key
-                value={this.props.outputPublicKey}
+                value={this.props.transaction.outputPublicKey}
                 onChange={this.props.onChangeOutputPublicKey}
                 readOnly={false}
                 tooltipText="Specify who should receive the coins with their public key"
@@ -92,7 +89,7 @@ export default class NewTransaction extends Component {
                 }}
                 type="number"
                 onChange={this.props.onChangeTransactionAmount}
-                value={this.props.transactionAmount}
+                value={this.props.transaction.amount}
               />
             </td>
             <td>
@@ -105,7 +102,7 @@ export default class NewTransaction extends Component {
                 }}
                 type="number"
                 onChange={this.props.onChangeFee}
-                value={this.props.fee}
+                value={this.props.transaction.fee}
               />
             </td>
           </tr>

@@ -12,7 +12,7 @@ export default class WelcomeUTXOPoolTable extends Component {
     inputPublicKey: "",
     outputPublicKey: "",
     transactionAmount: 0,
-    fee: 0,
+    fee: 0
   };
 
   onChangeInputPublicKey = inputPublicKey => {
@@ -36,6 +36,16 @@ export default class WelcomeUTXOPoolTable extends Component {
       fee: 0
     });
   };
+
+  authoringTransaction() {
+    return new Transaction(
+      this.state.inputPublicKey,
+      this.state.outputPublicKey,
+      this.state.transactionAmount,
+      this.state.fee
+    );
+  }
+
   isValidTransaction() {
     return (
       this.state.inputPublicKey !== "" &&
@@ -46,12 +56,7 @@ export default class WelcomeUTXOPoolTable extends Component {
   broadcastTransaction = () => {
     publish("TRANSACTION_BROADCAST", {
       blockchainName: this.props.blockchain.name,
-      transaction: new Transaction(
-        this.state.inputPublicKey,
-        this.state.outputPublicKey,
-        this.state.transactionAmount,
-        this.state.fee
-      )
+      transaction: this.authoringTransaction()
     });
     this.exitAddingTransaction();
   };
@@ -70,15 +75,13 @@ export default class WelcomeUTXOPoolTable extends Component {
         />
         <Dialog
           isOpen={this.state.isAddingTransaction}
+          onClose={this.exitAddingTransaction}
           title="Broadcast transaction"
           style={{ width: "95%" }}
         >
           <div style={{ padding: "10px" }}>
             <NewTransaction
-              inputPublicKey={this.state.inputPublicKey}
-              outputPublicKey={this.state.outputPublicKey}
-              transactionAmount={this.state.transactionAmount}
-              fee={this.state.fee}
+              transaction={this.authoringTransaction()}
               onChangeInputPublicKey={this.onChangeInputPublicKey}
               onChangeOutputPublicKey={this.onChangeOutputPublicKey}
               onChangeTransactionAmount={this.onChangeTransactionAmount}
