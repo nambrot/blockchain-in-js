@@ -4,7 +4,7 @@ With all the hype about blockchains and cryptocurrencies, I decided to learn a b
 
 ## To run
 
-This project is based upon `create-react-app` so a simple `yarn start` will pretty much start everything. You'll only need to start a simple `socket.io` server with `node src/server.js`. You can also run it with `docker-compose` if you prefer.
+This project is based upon `create-react-app` so a simple `yarn start` will pretty much start everything. You'll only need to start a simple `socket.io` server with `node src/server.js`. You can also run it with `docker-compose` if you prefer. Or find the most recent version running on [blockchain.nambrot.com](https://blockchain.nambrot.com)
 
 ## Step 1: A chain of blocks?
 
