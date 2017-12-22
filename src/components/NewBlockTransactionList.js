@@ -3,6 +3,7 @@ import { Collapse, Button, Callout } from "@blueprintjs/core";
 import TransactionTable from "./TransactionTable";
 import NewTransaction from "./NewTransaction";
 import Transaction from "../models/Transaction";
+import { Tooltip } from "./walkthrough";
 
 export default class NewBlockTransactionList extends Component {
   state = {
@@ -91,19 +92,32 @@ export default class NewBlockTransactionList extends Component {
           valid on this block (i.e. have valid signatures and have spendable
           UTXOs). You can add them to the block.
         </p>
-        <TransactionTable
-          transactions={this.applicableExternalTransactions()}
-          noTransactionsText="This block contains no transactions."
-          transactionAction={transaction => (
-            <Button
-              text="Add Transaction"
-              onClick={() => {
-                this.props.block.addTransaction(transaction);
-                this.props.rerender();
-              }}
-            />
-          )}
-        />
+        <Tooltip
+          content={
+            <p style={{ maxWidth: "250px" }}>
+              Below you should see all transactions that have been broadcasted
+              including yours. As a miner you can add as many transactions as
+              possible to collect the fees. Remember, you will still have to
+              find a valid nonce that makes your block hash valid and then
+              broadcast it!
+            </p>
+          }
+          step={15}
+        >
+          <TransactionTable
+            transactions={this.applicableExternalTransactions()}
+            noTransactionsText="This block contains no transactions."
+            transactionAction={transaction => (
+              <Button
+                text="Add Transaction"
+                onClick={() => {
+                  this.props.block.addTransaction(transaction);
+                  this.props.rerender();
+                }}
+              />
+            )}
+          />
+        </Tooltip>
       </div>
     );
   }

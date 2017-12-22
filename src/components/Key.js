@@ -21,7 +21,9 @@ export default class Key extends Component {
     readOnly: true,
     onChange: () => {},
     popover: null,
-    tooltipText: "The color should help you find instances of this key throughout the page"
+    tooltipText:
+      "The color should help you find instances of this key throughout the page",
+    popoverDidOpen: () => {}
   };
   onChange = evt => {
     this.props.onChange(evt.target.value);
@@ -33,7 +35,7 @@ export default class Key extends Component {
         inline={true}
         position={Position.TOP}
       >
-        <Popover2 autoFocus={false}>
+        <Popover2 autoFocus={false} popoverDidOpen={this.props.popoverDidOpen}>
           <textarea
             className="pt-input"
             spellCheck={false}
@@ -49,7 +51,7 @@ export default class Key extends Component {
             onChange={this.onChange}
           />
           {this.props.popover}
-          </Popover2>
+        </Popover2>
       </Tooltip>
     );
   }

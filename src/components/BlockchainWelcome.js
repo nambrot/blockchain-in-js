@@ -5,6 +5,7 @@ import { Tab2, Tabs2, Tooltip } from "@blueprintjs/core";
 import WelcomeUTXOPoolTable from "./WelcomeUTXOPoolTable";
 import "../App.css";
 import AddIdentity from "./AddIdentity";
+import { Tooltip as WalkthroughTooltip } from "./walkthrough";
 
 class BlockchainWelcome extends Component {
   render() {
@@ -60,15 +61,29 @@ class BlockchainWelcome extends Component {
               id="nodes"
               title="Identities"
               panel={
-                <div>
-                  {Object.values(this.props.identities).map(identity => (
-                    <IdentityListItem
-                      key={identity.publicKey}
-                      identity={identity}
-                    />
-                  ))}
-                  <AddIdentity />
-                </div>
+                <WalkthroughTooltip
+                  content={
+                    <p style={{ maxWidth: "250px" }}>
+                      Ownership of coins is established via control over public
+                      keys with their corresponding private keys. Here you find
+                      the pairs that you generated and thus control exclusively.
+                      You can change their names for your convenience
+                    </p>
+                  }
+                  nextLabel="Next"
+                  step={5}
+                  quitWalkthroughVisible={true}
+                >
+                  <div>
+                    {Object.values(this.props.identities).map(identity => (
+                      <IdentityListItem
+                        key={identity.publicKey}
+                        identity={identity}
+                      />
+                    ))}
+                    <AddIdentity />
+                  </div>
+                </WalkthroughTooltip>
               }
             />
           </Tabs2>

@@ -5,6 +5,10 @@ import Transaction from "../models/Transaction";
 import UTXOPoolTable from "./UTXOPoolTable";
 import classnames from "classnames";
 import { publish } from "../network";
+import {
+  Tooltip,
+  advanceTo
+} from "./walkthrough";
 
 export default class WelcomeUTXOPoolTable extends Component {
   state = {
@@ -65,6 +69,7 @@ export default class WelcomeUTXOPoolTable extends Component {
       blockchainName: this.props.blockchain.name,
       transaction: this.authoringTransaction().toJSON()
     });
+    advanceTo(14);
     this.exitAddingTransaction();
   };
   render() {
@@ -97,15 +102,30 @@ export default class WelcomeUTXOPoolTable extends Component {
               block={this.props.blockchain.maxHeightBlock()}
             />
             <div style={{ float: "right" }}>
-              <Button
-                iconName="pt-icon-add"
-                className={classnames("pt-intent-primary", {
-                  "pt-disabled": !this.isValidTransaction()
-                })}
-                onClick={this.broadcastTransaction}
+              <Tooltip
+                content={
+                  <p style={{ maxWidth: "250px" }}>
+                    Now you are ready to announce your transaction to the
+                    network in the hopes that someone will pick it up and add it
+                    to their block. If you really want to make sure it will end
+                    up in the blockchain, you can also just mine the block
+                    yourself and add your own transaction!
+                  </p>
+                }
+                next={this.broadcastTransaction}
+                nextLabel="Broadcast"
+                step={13}
               >
-                Broadcast
-              </Button>
+                <Button
+                  iconName="pt-icon-add"
+                  className={classnames("pt-intent-primary", {
+                    "pt-disabled": !this.isValidTransaction()
+                  })}
+                  onClick={this.broadcastTransaction}
+                >
+                  Broadcast
+                </Button>
+              </Tooltip>
               <Button
                 style={{ marginLeft: "10px", marginRight: "24px" }}
                 onClick={this.exitAddingTransaction}

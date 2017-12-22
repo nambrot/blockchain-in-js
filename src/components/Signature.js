@@ -5,15 +5,20 @@ import AddIdentity from "./AddIdentity";
 import { sign, verifySignature } from "../crypto";
 import { state } from "../store";
 import classnames from "classnames";
-import Key from "./Key"
-
+import Key from "./Key";
+import {
+  Tooltip,
+  advanceTo,
+  hideWalkthrough,
+} from "./walkthrough";
 export default class Signature extends Component {
   static defaultProps = {
     isEditable: true,
     signature: "",
     messageToSign: "",
     publicKey: "",
-    onChangeSignature: () => {}
+    onChangeSignature: () => {},
+    onOpenSignatureDialog: () => {}
   };
 
   constructor(props) {
@@ -24,7 +29,10 @@ export default class Signature extends Component {
       privateKey: ""
     };
   }
-  openSignature = () => this.setState({ isAddingSignature: true });
+  openSignature = () => {
+    this.setState({ isAddingSignature: true });
+    this.props.onOpenSignatureDialog();
+  };
   closeSignature = () => this.setState({ isAddingSignature: false });
   submitSignature = () => {
     this.props.onChangeSignature(this.calculatedSignature());
@@ -32,6 +40,7 @@ export default class Signature extends Component {
   };
 
   changePrivateKey = evt => {
+    hideWalkthrough();
     this.setState({ privateKey: evt.target.value });
   };
   calculatedSignature() {
@@ -52,6 +61,13 @@ export default class Signature extends Component {
       this.props.publicKey
     );
   }
+
+  selectPrivateKey = privateKey => {
+    return () => {
+      advanceTo(12);
+      this.setState({ privateKey });
+    };
+  };
   render() {
     return (
       <div>
@@ -85,17 +101,19 @@ export default class Signature extends Component {
           isOpen={this.state.isAddingSignature}
           title="Add signature"
           onClose={this.closeSignature}
-          style={{width: '70%'}}
+          style={{ width: "70%" }}
         >
-          <div>
+          <div style={{ padding: "10px" }}>
             <p>
-              Signatures are used to prove ownership over a public key. Only the corresponding private key can yield a valid signature.
+              Signatures are used to prove ownership over a public key. Only the
+              corresponding private key can yield a valid signature. Updates to
+              transaction data require an updated signature.
             </p>
             <table>
               <thead>
                 <tr>
-                <th>Public Key</th>
-                <th>Message to Sign</th>
+                  <th>Public Key</th>
+                  <th>Message to Sign</th>
                   <th />
                   <th>Private Key</th>
                   <th />
@@ -105,7 +123,7 @@ export default class Signature extends Component {
               <tbody>
                 <tr>
                   <td>
-                  <Key value={this.props.publicKey} />
+                    <Key value={this.props.publicKey} />
                   </td>
                   <td>
                     <textarea
@@ -121,7 +139,7 @@ export default class Signature extends Component {
                   </td>
                   <td>+</td>
                   <td>
-                    <Popover2 autoFocus={false}>
+                    <Popover2 defaultIsOpen={true}>
                       <textarea
                         className="pt-input"
                         placeholder="Private Key"
@@ -133,16 +151,24 @@ export default class Signature extends Component {
                         value={this.state.privateKey}
                       />
                       <div style={{ padding: "10px" }}>
-                        <h6>Identities you control</h6>
+                      <Tooltip
+                      content={
+                        <p style={{ maxWidth: "250px" }}>
+                         Pick the right private key for the originating public key
+                        </p>
+                      }
+                      step={11}
+                      nextButtonVisible={false}
+                    >
+                          <h6>Identities you control</h6>
+                          </Tooltip>
                         {Object.values(state.identities).map(identity => {
                           return (
                             <a
                               key={identity.publicKey}
-                              onClick={() =>
-                                this.setState({
-                                  privateKey: identity.privateKey
-                                })
-                              }
+                              onClick={this.selectPrivateKey(
+                                identity.privateKey
+                              )}
                             >
                               <li>{identity.name}</li>
                             </a>
@@ -172,12 +198,21 @@ export default class Signature extends Component {
             <div className="pt-dialog-footer">
               <div className="pt-dialog-footer-actions">
                 <Button text="Cancel" onClick={this.closeSignature} />
-                <Button
-                  iconName="pt-icon-add"
-                  className="pt-intent-primary"
-                  onClick={this.submitSignature}
-                  text="Update Signature"
-                />
+                <Tooltip
+                  content={
+                    <p style={{ maxWidth: "250px" }}>Add the signature here.</p>
+                  }
+                  nextLabel="Update"
+                  next={this.submitSignature}
+                  step={12}
+                >
+                  <Button
+                    iconName="pt-icon-add"
+                    className="pt-intent-primary"
+                    onClick={this.submitSignature}
+                    text="Update Signature"
+                  />
+                </Tooltip>
               </div>
             </div>
           </div>

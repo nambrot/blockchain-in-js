@@ -3,6 +3,7 @@ import sha256 from "crypto-js/sha256";
 import classnames from "classnames";
 import { Button } from "@blueprintjs/core";
 import Key from "./Key";
+import { Tooltip, advanceTo } from "./walkthrough";
 
 export default class NewBlockHeader extends Component {
   changeNonce = evt => {
@@ -17,8 +18,12 @@ export default class NewBlockHeader extends Component {
       this.props.rerender();
 
       if (!this.props.block.isValid()) {
-        setTimeout(this.tryUntilFound, 20);
+        setTimeout(this.tryUntilFound, 2);
+      } else {
+        advanceTo(4)
       }
+    } else {
+      advanceTo(4)
     }
   };
   render() {
@@ -91,13 +96,24 @@ export default class NewBlockHeader extends Component {
             <tr>
               <td>Nonce</td>
               <td>
-                <textarea
-                  className="pt-input"
-                  spellCheck={false}
-                  style={{ width: "150px", height: "75px" }}
-                  value={this.props.block.nonce}
-                  onChange={this.changeNonce}
-                />
+                <Tooltip
+                  content={
+                    <p style={{ maxWidth: "250px" }}>
+                      The hash of the block is based upon various parameters in this header, like the hash of the parent block, or the receiver of the mining reward (aka coinbase). Per rules of the protocol, the hash has to fullfill certain criteria, such as end in a minimum number of 0s. Changing the nonce allows you to change the hash of the block. Only valid blocks are considered by other nodes, thus if you actually want to receive coins, you better start mining for applicable nonces!
+                    </p>
+                  }
+                  next={this.tryUntilFound}
+                  nextLabel="Crunch some numbers!"
+                  step={3}
+                >
+                  <textarea
+                    className="pt-input"
+                    spellCheck={false}
+                    style={{ width: "150px", height: "75px" }}
+                    value={this.props.block.nonce}
+                    onChange={this.changeNonce}
+                  />
+                </Tooltip>
               </td>
               <td>
                 This is the part that is miners have to guess random values for
