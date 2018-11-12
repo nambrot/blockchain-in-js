@@ -1,0 +1,47 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    name: server-deployment
+  name: server-deployment
+  namespace: blockchain-in-js-{{ .Values.step_name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: server-deployment
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: server-deployment
+    spec:
+      containers:
+      - env:
+        image: {{ required "server image" .Values.server_image }}
+        imagePullPolicy: Always
+        name: server-deployment
+        ports:
+        - containerPort: 4000
+          name: http-server
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        terminationMessagePath: /dev/termination-log
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

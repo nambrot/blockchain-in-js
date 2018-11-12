@@ -1,0 +1,16 @@
+# web-service.yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: socketio-server
+  labels:
+    name: socketio-server
+  namespace: blockchain-in-js-{{ .Values.step_name }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 4000
+      targetPort: 4000
+      protocol: TCP
+  selector:
+    name: server-deployment

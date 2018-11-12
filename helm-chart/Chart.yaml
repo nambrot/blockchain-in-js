@@ -1,0 +1,4 @@
+apiVersion: v1
+description: A Helm chart blockchain-in-js
+name: blockchain-in-js
+version: 0.1.0

@@ -91,16 +91,18 @@ class App extends Component {
         <Dialog step={0} title="Welcome!" quitWalkthroughVisible={true}>
           <div>
             <p>
-              This is an interactive blockchain demo. Please see the{" "}
+              This is an final step of an interactive blockchain demo. There is
+              a detailed step by step expanation of all the mechanics involved 
+              in making a blockchain that will give you a much better understanding 
+              of how blockchains work, so I highly recommend checking it out at {" "}
               <a
                 href="https://github.com/nambrot/blockchain-in-js"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 repo at github.com/nambrot/blockchain-in-js
-              </a>{" "}
-              to learn how to build this or just start playing around with this
-              demo. Note that this is a distributed demo, so you can open up{" "}
+              </a>{" "}.
+              Note that this is a distributed demo, so you can open up{" "}
               <a href="/" target="_blank" rel="noopener noreferrer">
                 multiple tabs
               </a>{" "}

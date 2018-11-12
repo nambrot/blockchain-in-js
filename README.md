@@ -1,10 +1,6 @@
 # Build your own Blockchain in Javascript
 
-With all the hype about blockchains and cryptocurrencies, I decided to learn a bit more about it. And what better way to learn than to try to build it? Here you will find my attempts to build blockchains from their basic principles, and hopefully in the process it helps someone else to learn something from this as well. Let's get started. Disclaimer: I took some liberties in some aspects where this blockchain will diverge from reality for pedagogical purposes.
-
-## To run
-
-This project is based upon `create-react-app` so a simple `yarn start` will pretty much start everything. You'll only need to start a simple `socket.io` server with `node src/server.js`. You can also run it with `docker-compose` if you prefer. Or find the most recent version running on [blockchain.nambrot.com](https://blockchain.nambrot.com)
+With all the hype about blockchains and cryptocurrencies, I decided to learn a bit more about it. And what better way to learn than to try to build it yourself? Below you will find a step-to-step explanation of how a blockchain works and how to build one from their basic principles. At every step below, you can check out the equivalent version of the demo at [blockchain-step${N}.nambrot.com](https://blockchain.nambrot.com) with the final version being available at [blockchain.nambrot.com](https://blockchain.nambrot.com) Disclaimer: I took some liberties in some aspects where this blockchain will diverge from reality for pedagogical purposes.
 
 ## Step 1: A chain of blocks?
 
@@ -30,6 +26,8 @@ If you look at the code, you can see how the P2P aspect of blockchains comes int
 
 
 ## Step 2: So what is THE blockchain?
+
+[Link to Step 2 Demo](https://blockchain-step2.nambrot.com/)
 
 In step 1, we saw that in a chain of blocks, the last block basically validates all data in the chain of its ascendents, as any change in the data up the chain would inevitably change the hash of the last block. That is all great, but what do people mean by THE blockchain?
 
@@ -58,6 +56,8 @@ class Blockchain {
 So given a tree, the longest chain represents our current view of which history of blocks, and thus which representation of data is the one we deem valid.
 
 ## Step 3: Not a free-for-all
+
+[Link to Step 3 Demo](https://blockchain-step3.nambrot.com/)
 
 If real blockchains worked like Step 2, then it would be a chaotic free-for-all where nodes just can abitrarily fork a chain of blocks and add basically infinitely many blocks to it, to make it the longest chain and thus THE blockchain (as you have seen in the above GIF). That would mean that anyone could just change history and effectively mutate past data. How do we avoid that situation?
 
@@ -90,6 +90,8 @@ Proof-of-work is what "secures" the blockchain, makes it decentralized and the r
 
 ## Step 4: What do I mine?
 
+[Link to Step 4 Demo](https://blockchain-step4.nambrot.com/)
+
 So the question is why miners would expend all this effort to add a block? Unless it is a fun game for them, usually we are talking about economic incentives now. In order for the blockchain to be secured by miners, the protocol gives miners a mining reward, currently amounting to 12.5 Bitcoin. Other nodes will accept the miners block with the reward to itself as long as it passes the other rules of the protocol we discussed above. Let's talk about the specific mechanic of how a miner gives itself the reward, which requires a concept of ownership and a way to include such ownership in a block.
 
 To understand ownership, you'll need a high-level understanding of public-key encryption which is beyond the scope of this tutorial. ([https://www.youtube.com/watch?v=3QnD2c4Xovk](https://www.youtube.com/watch?v=3QnD2c4Xovk) looks like a good non-technical explanation). All you need to know for this is that the following possible:
@@ -97,9 +99,9 @@ To understand ownership, you'll need a high-level understanding of public-key en
 1. There is a way to generate two things, a public key and a private key. Keep the private key secret.
 2. Per the name, the public key is something that you can publish publically to other parties.
 3. In order to proof that you were the one that generated the public key, you can sign a specific message (or arbitrary data) with your private key. Others can take your signature (that is specific to the message), the message as well as your public key and verify that the signature must have indeed come from someone who has control of the private key (as there is no way to satisfactorally sign the message without the private key).
-(4. With a public key, you can encrypt a message (data) so that only the owner of the private key can decrypt it)
+4. (With a public key, you can encrypt a message (data) so that only the owner of the private key can decrypt it)
 
-In short, ownership is the concept of being in control of something, in this case, you "own" the public key, and you can prove such ownership by signing data with your private key. Thus, in order to receive the mining reward, i.e. claim ownership over it, all the miner has to do is to include their public key in the block. That public key is also known as the wallet address in Bitcoin.
+In short, ownership is the concept of being in control of something, in this case, you "own" the public key, and you can prove such ownership by signing data with your private key. Thus, in order to receive the mining reward, i.e. claim ownership over it, all the miner has to do is to include their public key in the block. That public key is also known as the wallet address in Bitcoin (oversimplication).
 
 So let's just simply add a field in the block called `coinbaseBeneficiary` that contains the public key of the miner and add it to the payload for the hash calculation:
 
@@ -126,11 +128,7 @@ class Block {
 }
 ```
 
-You should know enough of about blockchains and the way they enable to us record data as a ledger in order to understand how this can allows us to keep track of ownership of "coins". The next few steps will be about actually using the coins and making them useful in transactions.
-
-### Step 5: What really is a coin?
-
-As described in Step 4, a coin is just ownership over a public key with a private key. By walking down a chain of blocks, you can add up which public keys own how many coins. In reality, these are called Unspent Transaction Outputs (UTXOs), the transaction part will come shortly). To avoid having to traverse chains of blocks everytime we want to find out how many coins an address controls, we "cache" that knowledge with each block into a UTXO pool. Whenever we add a block to a parent, we just take the parents UTXO pool and add the coins of the coinbase beneficiary.
+Thus, a coin is just ownership over a public key with a private key. By walking down a chain of blocks, you can add up which public keys own how many coins. In reality, these are called Unspent Transaction Outputs (UTXOs), the transaction part will come shortly). To avoid having to traverse chains of blocks everytime we want to find out how many coins an address controls, we "cache" that knowledge with each block into a UTXO pool. Whenever we add a block to a parent, we just take the parents UTXO pool and add the coins of the coinbase beneficiary.
 
 ```javascript
 class UTXOPool {
@@ -184,6 +182,8 @@ This way, you should also start the see of how the blockchain acts as a ledger, 
 ![51attack](https://user-images.githubusercontent.com/571810/33613179-f1c861c0-d9a1-11e7-8366-4064cec2e95b.gif)
 
 ### Step 5: You get a coin! You get a coin!
+
+[Link to Step 5 Demo](https://blockchain-step5.nambrot.com/)
 
 We are getting very close to have this be a usable blockchain. The only thing we are really lacking is the ability to send someone a coin. We are finally getting to transactions. And it's actually pretty simple:
 
@@ -266,6 +266,8 @@ You should recognize an additional method of keeping miners "honest". If miners 
 
 # Step 6: I don't do math.
 
+[Link to Step 6 Demo](https://blockchain-step6.nambrot.com/)
+
 What if you (or more specifically your computers) are bad at math, does that mean you don't get to have your transactions added to the blockchain? That would be terrible! Instead, as a non-mining node, let's add the ability to broadcast a transaction, that a different mining node can then add to their block:
 
 ```javascript
@@ -290,7 +292,9 @@ class Blockchain {
 
 # Step 7: No free lunches
 
-Unless you subscribe to the most extreme interpretations of "love thy neighbor", people generally don't like to do things free for others. So why would a mining node add a transaction for a non-mining node? You are right, they wouldn't. So let's add some incentives for them with a transaction fee that we can specify as a transaction author to increase the chances of some mining node adding our transaction to their block.
+[Link to Step 7 Demo](https://blockchain-step7.nambrot.com/)
+
+Unless you subscribe to the charitable interpretations of "love thy neighbor", people generally don't like to do things free for others. So why would a mining node add a transaction for a non-mining node? You are right, they wouldn't. So let's add some incentives for them with a transaction fee that we can specify as a transaction author to increase the chances of some mining node adding our transaction to their block.
 
 ```javascript
 class Block {
@@ -320,6 +324,8 @@ class UTXOPool {
 ```
 
 # Step 8: Don't touch my money
+
+[Link to Final Demo](https://blockchain.nambrot.com/)
 
 If you paid attention, you have noticed that it was possible for any node to spend any UTXO available. If that were the case in reality, it would be madness! Let's fix this by completing the ownership story. As we said above, ownership is really just the ability to prove that you have generated the private key. So to know if a transaction was truly the intention of the owner, all we have to do is request a signature of the transaction hash with the private key. Nodes can then verify that the signature is indeed valid for the transaction when they validate transaction of blocks they are receiving.
 
@@ -361,3 +367,8 @@ AND THATS IT!!! As you'll hopefully agree with me, blockchains are actually quit
 # Wait, there is more
 
 JK, there isn't as of yet. I might add merkle trees and segwit in the future, but for now, I hope this gives you a good overview of how blockchains such as Bitcoin work.
+
+
+## To run
+
+This project is based upon `create-react-app` so a simple `yarn start` will pretty much start everything. You'll only need to start a simple `socket.io` server with `node src/server.js`. You can also run it with `docker-compose` if you prefer. Or find the most recent version running on [blockchain.nambrot.com](https://blockchain.nambrot.com)

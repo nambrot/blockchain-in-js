@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: blockchain-ingress
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx"
+  namespace: blockchain-in-js-{{ .Values.step_name }}
+spec:
+  tls:
+  - hosts:
+    - blockchain-{{ .Values.step_name }}.nambrot.com
+    secretName: echoserver-tls-{{ .Values.step_name }}
+  rules:
+  - host: blockchain-{{ .Values.step_name }}.nambrot.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: client-service
+          servicePort: 80

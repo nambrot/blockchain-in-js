@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    name: client-deployment
+  name: client-deployment
+  namespace: blockchain-in-js-{{ required "step name" .Values.step_name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: client-deployment
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: client-deployment
+    spec:
+      containers:
+      - env:
+        image: {{ required "Client image" .Values.client_image }}
+        imagePullPolicy: Always
+        name: client-deployment
+        ports:
+        - containerPort: 80
+          name: http-server
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 10m
+            memory: 10Mi
+        terminationMessagePath: /dev/termination-log
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
