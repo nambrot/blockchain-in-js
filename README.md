@@ -31,7 +31,7 @@ If you look at the code, you can see how the P2P aspect of blockchains comes int
 
 In step 1, we saw that in a chain of blocks, the last block basically validates all data in the chain of its ascendents, as any change in the data up the chain would inevitably change the hash of the last block. That is all great, but what do people mean by THE blockchain?
 
-By definition, THE blockchain is just the longest chain available in the tree. So at one point, a chain can be the lonest one, but then get superseeded by another. Let's visualize the longest chain in the tree.
+By definition, THE blockchain is just the longest chain available in the tree. So at one point, a chain can be the longest one, but then get superseeded by another. Let's visualize the longest chain in the tree.
 
 ```javascript
 class Blockchain {
